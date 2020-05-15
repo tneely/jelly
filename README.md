@@ -25,3 +25,12 @@ There are two primary files that are needed to serve your application.
 2. `app-config.json`
 
 > - This file points to your app's repository in GitHub. Replace `appName` with the name of your application. Replace the values for `owner` and `repo` with the ones for your application.
+
+## Building your website
+
+The CodePipeline will build your project according to the `buildspec.yml` file you define in the repository. The pipeline's build step exposes 3 environment variables that you will need to store during the build step so that your application has access to them at runtime. They are named as follows:
+
+- REACT_APP_AWS_REGION: The AWS region the website is deployed in
+- REACT_APP_USER_POOL_ID: The Cognito UserPool the application can connect to to authenticate users
+- REACT_APP_USER_POOL_CLIENT_ID: The Cognito UserPool Client the application should run as
+- REACT_APP_API_INVOKE_URL: The API Gateway URL that backs your website
