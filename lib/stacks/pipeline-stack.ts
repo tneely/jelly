@@ -18,8 +18,8 @@ export interface PipelineStackProps extends cdk.StackProps {
 }
 
 export class PipelineStack extends cdk.Stack {
-  constructor(app: cdk.App, id: string, props: PipelineStackProps) {
-    super(app, id, props);
+  constructor(app: cdk.App, appName: string, props: PipelineStackProps) {
+    super(app, `${appName}PipelineStack`, props);
 
     const siteBuild = new codebuild.PipelineProject(this, "SiteBuild");
     const siteOutput = new codepipeline.Artifact("SiteBuildOutput");
