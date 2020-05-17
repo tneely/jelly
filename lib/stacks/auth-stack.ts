@@ -4,6 +4,9 @@ import * as config from "../../config/app-config.json";
 
 export interface AuthStackProps extends cdk.StackProps {}
 
+/**
+ * A CloudFormation stack for auth constructs
+ */
 export class AuthStack extends cdk.Stack {
   public readonly userPool: cognito.UserPool;
   public readonly userPoolClient: cognito.UserPoolClient;

@@ -2,6 +2,9 @@ import * as cdk from "@aws-cdk/core";
 
 export interface RoutingStackProps extends cdk.StackProps {}
 
+/**
+ * A CloudFormation stack for routing constructs
+ */
 export class RoutingStack extends cdk.Stack {
   constructor(app: cdk.App, appName: string, props?: RoutingStackProps) {
     super(app, `${appName}RoutingStack`, props);

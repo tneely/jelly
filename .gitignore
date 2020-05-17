@@ -1,8 +1,13 @@
 *.js
 !jest.config.js
+!.prettierrc.js
+!.eslintrc.js
 *.d.ts
 node_modules
 secrets*
+
+# Editors
+.vscode
 
 # CDK asset staging directory
 .cdk.staging

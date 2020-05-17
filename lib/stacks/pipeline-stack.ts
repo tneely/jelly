@@ -6,9 +6,9 @@ import * as cloudfront from "@aws-cdk/aws-cloudfront";
 import * as cognito from "@aws-cdk/aws-cognito";
 import * as s3 from "@aws-cdk/aws-s3";
 
-import * as config from "../config/app-config.json";
-import * as secrets from "../config/secrets.json";
-import { DistributionInvalidateAction } from "./constructs/distribution-invalidate-action";
+import * as config from "../../config/app-config.json";
+import * as secrets from "../../config/secrets.json";
+import { DistributionInvalidateAction } from "../constructs/distribution-invalidate-action";
 
 export interface PipelineStackProps extends cdk.StackProps {
   readonly siteBucket: s3.Bucket;
@@ -17,6 +17,9 @@ export interface PipelineStackProps extends cdk.StackProps {
   readonly userPoolClient: cognito.UserPoolClient;
 }
 
+/**
+ * A CloudFormation stack for pipeline constructs
+ */
 export class PipelineStack extends cdk.Stack {
   constructor(app: cdk.App, appName: string, props: PipelineStackProps) {
     super(app, `${appName}PipelineStack`, props);

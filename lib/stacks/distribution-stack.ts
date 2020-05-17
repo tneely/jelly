@@ -4,6 +4,9 @@ import * as cloudfront from "@aws-cdk/aws-cloudfront";
 
 export interface DistributionStackProps extends cdk.StackProps {}
 
+/**
+ * A CloudFormation stack for distribution constructs
+ */
 export class DistributionStack extends cdk.Stack {
   public readonly siteBucket: s3.Bucket;
   public readonly distribution: cloudfront.CloudFrontWebDistribution;

@@ -2,8 +2,10 @@ import * as cdk from "@aws-cdk/core";
 
 export interface ApiStackProps extends cdk.StackProps {}
 
+/**
+ * A CloudFormation stack for API constructs
+ */
 export class ApiStack extends cdk.Stack {
-
   constructor(app: cdk.App, appName: string, props?: ApiStackProps) {
     super(app, `${appName}ApiStack`, props);
 
