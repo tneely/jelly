@@ -1,8 +1,8 @@
 {
-  "name": "infrastructure",
+  "name": "jelly",
   "version": "0.1.0",
   "bin": {
-    "infrastructure": "bin/infrastructure.js"
+    "jelly": "bin/jelly.js"
   },
   "scripts": {
     "build": "tsc",
@@ -14,6 +14,7 @@
   "devDependencies": {
     "@aws-cdk/assert": "^1.39.0",
     "@aws-cdk/aws-apigateway": "^1.39.0",
+    "@aws-cdk/aws-apigatewayv2": "^1.39.0",
     "@aws-cdk/aws-cloudfront": "^1.39.0",
     "@aws-cdk/aws-codebuild": "^1.39.0",
     "@aws-cdk/aws-codedeploy": "^1.39.0",

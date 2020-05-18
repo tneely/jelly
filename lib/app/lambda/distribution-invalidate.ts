@@ -36,11 +36,7 @@ const cloudFrontClient = new aws.CloudFront();
 
 export const handler = async (event: CodePipelineEvent) => {
   console.log(
-    `Processing distribution invalidation for request: ${JSON.stringify(
-      event,
-      undefined,
-      2
-    )}`
+    `Processing distribution invalidation for request: ${JSON.stringify(event, undefined, 2)}`
   );
 
   const jobId = event["CodePipeline.job"].id;
@@ -66,12 +62,9 @@ export const handler = async (event: CodePipelineEvent) => {
   await codePipelineClient.putJobSuccessResult({ jobId }).promise();
 };
 
-const getParameters = (
-  event: CodePipelineEvent
-): DistributionInvalidateParameters => {
+const getParameters = (event: CodePipelineEvent): DistributionInvalidateParameters => {
   return JSON.parse(
-    event["CodePipeline.job"].data.actionConfiguration.configuration
-      .UserParameters
+    event["CodePipeline.job"].data.actionConfiguration.configuration.UserParameters
   );
 };
 

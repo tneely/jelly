@@ -8,10 +8,7 @@ export class InlineCodeFromFile extends lambda.InlineCode {
   constructor(entry: string) {
     validateEntry(entry);
     const buildDir = path.join(path.dirname(entry), ".build");
-    const outDir = path.join(
-      buildDir,
-      crypto.createHash("sha256").update(entry).digest("hex")
-    );
+    const outDir = path.join(buildDir, crypto.createHash("sha256").update(entry).digest("hex"));
     const codePath = compileCodeFromFile(entry, outDir);
     const code = fs.readFileSync(codePath).toString();
 
@@ -32,15 +29,7 @@ const validateEntry = (entry: string) => {
 const compileCodeFromFile = (entry: string, outDir: string) => {
   const tscPath = loadTscPath();
   try {
-    const args = [
-      entry,
-      "--outDir",
-      outDir,
-      "--module",
-      "CommonJS",
-      "--target",
-      "ES2019",
-    ];
+    const args = [entry, "--outDir", outDir, "--module", "CommonJS", "--target", "ES2019"];
     const tsc = child_process.spawnSync(tscPath, args);
     if (tsc.error) {
       throw tsc.error;
@@ -61,9 +50,7 @@ const loadTscPath = () => {
     // This will throw if `typescript` cannot be found
     typescriptPath = require.resolve("typescript/package.json");
   } catch (err) {
-    throw new Error(
-      "It looks like Typescript is not installed. How are you running this?"
-    );
+    throw new Error("It looks like Typescript is not installed. How are you running this?");
   }
   const typescriptDir = path.dirname(typescriptPath);
   const typescriptPkg = JSON.parse(fs.readFileSync(typescriptPath, "utf8"));

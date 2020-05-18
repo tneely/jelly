@@ -10,14 +10,16 @@ export interface DataStackProps extends cdk.StackProps {}
 export class DataStack extends cdk.Stack {
   public readonly table: dynamodb.Table;
 
-  constructor(app: cdk.App, appName: string, props?: DataStackProps) {
-    super(app, `${appName}DataStack`, props);
+  constructor(scope: cdk.Construct, appName: string, props?: DataStackProps) {
+    super(scope, `${appName}DataStack`, props);
 
-    this.table = new dynamodb.Table(this, "TestTable", {
+    this.table = new dynamodb.Table(this, "Primary", {
       partitionKey: {
         name: "id",
         type: AttributeType.STRING,
       },
     });
+
+    // TODO: Generate tables from API schema?
   }
 }
