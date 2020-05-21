@@ -8,8 +8,8 @@ phases:
   build:
     commands:
       - echo "Building project..."
-      - npm run-script cdk synth -- -o .dist'
+      - npm run-script cdk synth -- -o dist'
 artifacts:
-  base-directory: .dist
+  base-directory: dist
   files:
     - "**/*"

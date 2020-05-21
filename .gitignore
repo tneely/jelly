@@ -17,4 +17,6 @@ cdk.out
 # Parcel build directories
 .cache
 .build
+build
 .dist
+dist

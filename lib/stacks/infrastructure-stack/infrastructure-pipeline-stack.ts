@@ -3,9 +3,11 @@ import * as codebuild from "@aws-cdk/aws-codebuild";
 import * as codepipeline from "@aws-cdk/aws-codepipeline";
 import { BuildStage, DeployStage, SelfUpdateStage, SourceStage } from "./stages";
 import { GithubDetails } from "../../shapes/github-details";
+import { StackDetails } from "../../shapes/stack-details";
 
 export interface PipelineStackProps extends cdk.StackProps {
   github: GithubDetails;
+  appStacks: StackDetails[];
 }
 
 /**
@@ -13,7 +15,7 @@ export interface PipelineStackProps extends cdk.StackProps {
  */
 export class InfrastructurePipelineStack extends cdk.Stack {
   constructor(scope: cdk.Construct, appName: string, props: PipelineStackProps) {
-    super(scope, `${appName}PipelineStack`, props);
+    super(scope, `${appName}InfrastructurePipelineStack`, props);
 
     const pipeline = new codepipeline.Pipeline(this, "Pipeline", {
       restartExecutionOnUpdate: true,
@@ -46,6 +48,11 @@ export class InfrastructurePipelineStack extends cdk.Stack {
       })
     );
 
-    pipeline.addStage(DeployStage({}));
+    pipeline.addStage(
+      DeployStage({
+        input: jellyBuildOutput,
+        appStacks: props.appStacks,
+      })
+    );
   }
 }

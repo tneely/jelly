@@ -23,7 +23,7 @@ export interface PipelineStackProps extends cdk.StackProps {
  */
 export class ApplicationPipelineStack extends cdk.Stack {
   constructor(scope: cdk.Construct, appName: string, props: PipelineStackProps) {
-    super(scope, `${appName}PipelineStack`, props);
+    super(scope, `${appName}ApplicationPipelineStack`, props);
 
     const pipeline = new codepipeline.Pipeline(this, "Pipeline", {
       restartExecutionOnUpdate: true,

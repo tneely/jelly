@@ -29,8 +29,8 @@ const validateEntry = (entry: string) => {
 const compileCodeFromFile = (entry: string, outDir: string) => {
   const tscPath = loadTscPath();
   try {
-    const args = [entry, "--outDir", outDir, "--module", "CommonJS", "--target", "ES2019"];
-    const tsc = child_process.spawnSync(tscPath, args);
+    const args = [tscPath, entry, "--outDir", outDir, "--module", "CommonJS", "--target", "ES2019"];
+    const tsc = child_process.spawnSync("node", args);
     if (tsc.error) {
       throw tsc.error;
     }
