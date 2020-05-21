@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import * as cdk from "@aws-cdk/core";
 import * as config from "../config/app-config.json";
-import * as secrets from "../config/secrets.json";
+import secrets from "../config/secrets";
 import { GithubDetails } from "../lib/shapes/github-details";
 import { DistributionStack } from "../lib/stacks/distribution-stack";
 import { AuthStack } from "../lib/stacks/auth-stack";
@@ -11,6 +11,14 @@ import { RoutingStack } from "../lib/stacks/routing-stack";
 import { ApplicationPipelineStack } from "../lib/stacks/application-pipeline/application-pipeline-stack";
 import { InfrastructurePipelineStack } from "../lib/stacks/infrastructure-stack/infrastructure-pipeline-stack";
 import { StackDetails } from "../lib/shapes/stack-details";
+
+const validateConfig = () => {
+  if (secrets.githubKey == undefined) {
+    throw Error(
+      "No API key found for GitHub. Please set the environment variable 'GITHUB_API_KEY' to continue."
+    );
+  }
+};
 
 const createApplicationStacks = (
   app: cdk.App,
@@ -63,16 +71,19 @@ const createApplicationStacks = (
 };
 
 const createAllStacks = (app: cdk.App, appName: string, github: GithubDetails) => {
+  validateConfig();
+
   const appStacks = createApplicationStacks(jelly, config.appName, {
     ...config.github,
-    key: secrets.githubKey,
+    key: secrets.githubKey!,
   });
+
   new InfrastructurePipelineStack(app, appName, {
     // TODO: Make this configurable?
-    github: { owner: "tneely", repo: "jelly", key: secrets.githubKey },
+    github: { owner: "tneely", repo: "jelly", key: secrets.githubKey! },
     appStacks: appStacks,
   });
 };
 
 const jelly = new cdk.App();
-createAllStacks(jelly, config.appName, { ...config.github, key: secrets.githubKey });
+createAllStacks(jelly, config.appName, { ...config.github, key: secrets.githubKey! });

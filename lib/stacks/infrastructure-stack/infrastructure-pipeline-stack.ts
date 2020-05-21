@@ -38,6 +38,7 @@ export class InfrastructurePipelineStack extends cdk.Stack {
         project: jellyProject,
         input: jellySourceOutput,
         outputs: [jellyBuildOutput],
+        apiKey: props.github.key,
       })
     );
 

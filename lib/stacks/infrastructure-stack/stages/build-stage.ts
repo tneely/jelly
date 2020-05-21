@@ -6,6 +6,7 @@ export interface BuildStageProps {
   project: codebuild.Project;
   input: codepipeline.Artifact;
   outputs: codepipeline.Artifact[];
+  apiKey: string;
 }
 
 export const BuildStage = (props: BuildStageProps): codepipeline.StageOptions => {
@@ -14,6 +15,12 @@ export const BuildStage = (props: BuildStageProps): codepipeline.StageOptions =>
     project: props.project,
     input: props.input,
     outputs: props.outputs,
+    environmentVariables: {
+      GITHUB_API_KEY: {
+        type: codebuild.BuildEnvironmentVariableType.SECRETS_MANAGER,
+        value: props.apiKey,
+      },
+    },
   });
 
   return {
