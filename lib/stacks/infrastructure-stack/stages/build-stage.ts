@@ -1,4 +1,3 @@
-import * as cdk from "@aws-cdk/core";
 import * as codepipeline from "@aws-cdk/aws-codepipeline";
 import * as codepipeline_actions from "@aws-cdk/aws-codepipeline-actions";
 import * as codebuild from "@aws-cdk/aws-codebuild";
@@ -11,7 +10,6 @@ export interface BuildStageProps {
 }
 
 export const BuildStage = (props: BuildStageProps): codepipeline.StageOptions => {
-  const apiKeySecret = new cdk.SecretValue(props.apiKey);
   const cdkBuildAction = new codepipeline_actions.CodeBuildAction({
     actionName: "Cdk_Build",
     project: props.project,
@@ -19,8 +17,8 @@ export const BuildStage = (props: BuildStageProps): codepipeline.StageOptions =>
     outputs: props.outputs,
     environmentVariables: {
       GITHUB_API_KEY: {
-        type: codebuild.BuildEnvironmentVariableType.SECRETS_MANAGER,
-        value: apiKeySecret,
+        // TODO: Make this a secret?
+        value: props.apiKey,
       },
     },
   });
