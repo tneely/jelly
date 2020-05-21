@@ -17,7 +17,7 @@ export const BuildStage = (props: BuildStageProps): codepipeline.StageOptions =>
     outputs: props.outputs,
     environmentVariables: {
       GITHUB_API_KEY: {
-        type: codebuild.BuildEnvironmentVariableType.SECRETS_MANAGER,
+        // TODO: Store this secretly?
         value: props.apiKey,
       },
     },
