@@ -21,23 +21,23 @@ export class InfrastructurePipelineStack extends cdk.Stack {
       restartExecutionOnUpdate: true,
     });
 
-    const jellySourceOutput = new codepipeline.Artifact("CdkSourceOutput");
+    const cdkSourceOutput = new codepipeline.Artifact("CdkSourceOutput");
 
     pipeline.addStage(
       SourceStage({
-        output: jellySourceOutput,
+        output: cdkSourceOutput,
         github: props.github,
       })
     );
 
-    const jellyProject = new codebuild.PipelineProject(this, "JellyProject");
-    const jellyBuildOutput = new codepipeline.Artifact("JellyBuildOutput");
+    const cdkProject = new codebuild.PipelineProject(this, `${appName}Infrastructure`);
+    const cdkBuildOutput = new codepipeline.Artifact("CdkBuildOutput");
 
     pipeline.addStage(
       BuildStage({
-        project: jellyProject,
-        input: jellySourceOutput,
-        outputs: [jellyBuildOutput],
+        project: cdkProject,
+        input: cdkSourceOutput,
+        outputs: [cdkBuildOutput],
         apiKey: props.github.key,
       })
     );
@@ -45,13 +45,13 @@ export class InfrastructurePipelineStack extends cdk.Stack {
     pipeline.addStage(
       SelfUpdateStage({
         stack: this,
-        input: jellyBuildOutput,
+        input: cdkBuildOutput,
       })
     );
 
     pipeline.addStage(
       DeployStage({
-        input: jellyBuildOutput,
+        input: cdkBuildOutput,
         appStacks: props.appStacks,
       })
     );
