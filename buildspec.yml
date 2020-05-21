@@ -1,0 +1,15 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - echo "Installing source NPM dependencies..."
+      - npm install
+  build:
+    commands:
+      - echo "Building project..."
+      - npm run-script cdk synth -- -o .dist'
+artifacts:
+  base-directory: .dist
+  files:
+    - "**/*"

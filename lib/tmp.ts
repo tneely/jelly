@@ -1,22 +1,21 @@
 import * as cdk from "@aws-cdk/core";
-import { PipelineStack } from "./stacks/pipeline-stack";
+
+import { GithubDetails } from "./shapes/github-details";
 import { DistributionStack } from "./stacks/distribution-stack";
 import { AuthStack } from "./stacks/auth-stack";
 import { DataStack } from "./stacks/data-stack";
 import { ApiStack } from "./stacks/api-stack";
 import { RoutingStack } from "./stacks/routing-stack";
+import { ApplicationPipelineStack } from "./stacks/application-pipeline/application-pipeline-stack";
 
-export interface AppInfrastructureProps {
+export interface AppProps {
   appName: string;
-  github: {
-    owner: string;
-    repo: string;
-    key: string;
-  };
+  github: GithubDetails;
 }
 
-export class AppInfrastructure extends cdk.Construct {
-  constructor(scope: cdk.Construct, props: AppInfrastructureProps) {
+//TODO: Deploy from infrastructure pipeline and delete
+export class App extends cdk.Construct {
+  constructor(scope: cdk.Construct, props: AppProps) {
     super(scope, props.appName);
 
     const distributionStack = new DistributionStack(this, props.appName);
@@ -26,7 +25,7 @@ export class AppInfrastructure extends cdk.Construct {
       database: dataStack.table,
     });
     const routingStack = new RoutingStack(this, props.appName);
-    const pipelineStack = new PipelineStack(this, props.appName, {
+    const pipelineStack = new ApplicationPipelineStack(this, props.appName, {
       github: props.github,
       siteBucket: distributionStack.siteBucket,
       distribution: distributionStack.distribution,

@@ -3,6 +3,7 @@
 !.prettierrc.js
 !.eslintrc.js
 *.d.ts
+!lib/shapes/*.d.ts
 node_modules
 secrets*
 
@@ -16,3 +17,4 @@ cdk.out
 # Parcel build directories
 .cache
 .build
+.dist

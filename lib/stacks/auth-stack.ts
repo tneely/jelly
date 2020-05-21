@@ -1,6 +1,5 @@
 import * as cdk from "@aws-cdk/core";
 import * as cognito from "@aws-cdk/aws-cognito";
-import * as config from "../../../config/app-config.json";
 
 export interface AuthStackProps extends cdk.StackProps {}
 
@@ -16,7 +15,7 @@ export class AuthStack extends cdk.Stack {
 
     // Set up Cognito user pool and client to authenticate users
     this.userPool = new cognito.UserPool(this, "WebsiteUserPool", {
-      userPoolName: `${config.appName}UserPool`,
+      userPoolName: `${appName}UserPool`,
       selfSignUpEnabled: true,
       requiredAttributes: {
         email: true,
@@ -30,7 +29,7 @@ export class AuthStack extends cdk.Stack {
     });
     this.userPoolClient = new cognito.UserPoolClient(this, "WebsiteUserPoolClient", {
       userPool: this.userPool,
-      userPoolClientName: config.appName,
+      userPoolClientName: appName,
       // TODO: support OAuth flows?
     });
   }
