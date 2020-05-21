@@ -5,7 +5,6 @@
 *.d.ts
 !lib/shapes/*.d.ts
 node_modules
-secrets*
 
 # Editors
 .vscode
