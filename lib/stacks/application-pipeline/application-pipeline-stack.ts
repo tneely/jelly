@@ -5,8 +5,10 @@ import * as cloudfront from "@aws-cdk/aws-cloudfront";
 import * as cognito from "@aws-cdk/aws-cognito";
 import * as s3 from "@aws-cdk/aws-s3";
 import * as dynamodb from "@aws-cdk/aws-dynamodb";
+import * as api_gateway from "@aws-cdk/aws-apigatewayv2";
 import { BuildStage, DeployStage, SourceStage } from "./stages";
 import { GithubDetails } from "../../shapes/github-details";
+import { ApiLambdaStack } from "../api-update-stack";
 
 export interface PipelineStackProps extends cdk.StackProps {
   github: GithubDetails;
@@ -15,7 +17,8 @@ export interface PipelineStackProps extends cdk.StackProps {
   userPool: cognito.UserPool;
   userPoolClient: cognito.UserPoolClient;
   database: dynamodb.Table;
-  apiBucket: s3.Bucket;
+  api: api_gateway.HttpApi;
+  apiLambdaStack: ApiLambdaStack;
 }
 
 /**
@@ -51,7 +54,7 @@ export class ApplicationPipelineStack extends cdk.Stack {
           region: this.region,
           userPool: props.userPool,
           userPoolClient: props.userPoolClient,
-          apiInvokeUrl: "placeholder",
+          api: props.api,
         },
       })
     );
@@ -64,7 +67,8 @@ export class ApplicationPipelineStack extends cdk.Stack {
         },
         api: {
           input: apiBuildOutput,
-          bucket: props.apiBucket,
+          api: props.api,
+          apiLambdaStack: props.apiLambdaStack,
         },
         distribution: props.distribution,
       })

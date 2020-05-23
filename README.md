@@ -20,7 +20,7 @@ There are two primary files that are needed to serve your application.
 
 1. `secrets.json`
 
-> - You must create this file, as it is ignored by Git to prevent accidentally commit sensitive information. It must contain a `githubKey` field that contains your personal the GitHub API token. This must give AWS read access to your app's repository.
+> - ~~You must create this file, as it is ignored by Git to prevent accidentally commit sensitive information. It must contain a `githubKey` field that contains your personal the GitHub API token. This must give AWS read access to your app's repository.~~
 
 2. `app-config.json`
 
@@ -34,3 +34,5 @@ The CodePipeline will build your project according to the `buildspec.yml` file y
 - REACT_APP_USER_POOL_ID: The Cognito UserPool the application can connect to to authenticate users
 - REACT_APP_USER_POOL_CLIENT_ID: The Cognito UserPool Client the application should run as
 - REACT_APP_API_INVOKE_URL: The API Gateway URL that backs your website
+
+TODO: Add versioning, bake time to code deployments

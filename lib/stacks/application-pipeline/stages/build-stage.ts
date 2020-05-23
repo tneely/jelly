@@ -2,6 +2,7 @@ import * as codepipeline from "@aws-cdk/aws-codepipeline";
 import * as codepipeline_actions from "@aws-cdk/aws-codepipeline-actions";
 import * as codebuild from "@aws-cdk/aws-codebuild";
 import * as cognito from "@aws-cdk/aws-cognito";
+import * as api_gateway from "@aws-cdk/aws-apigatewayv2";
 
 export interface BuildStageProps {
   project: codebuild.Project;
@@ -12,7 +13,7 @@ export interface BuildStageProps {
     userPool: cognito.UserPool;
     userPoolClient: cognito.UserPoolClient;
     //TODO: change this to the API gateway construct instead of a string
-    apiInvokeUrl: string;
+    api: api_gateway.HttpApi;
   };
 }
 
@@ -39,7 +40,7 @@ export const BuildStage = (props: BuildStageProps): codepipeline.StageOptions =>
       },
       REACT_APP_API_INVOKE_URL: {
         type: codebuild.BuildEnvironmentVariableType.PLAINTEXT,
-        value: props.env.apiInvokeUrl,
+        value: props.env.api.url,
       },
     },
   });
