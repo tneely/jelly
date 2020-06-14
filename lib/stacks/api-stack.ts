@@ -6,6 +6,10 @@ import * as codedeploy from "@aws-cdk/aws-codedeploy";
 
 export interface ApiStackProps extends cdk.StackProps {
   /**
+   * The API Gateway to use
+   */
+  apiGateway: api_gateway.HttpApi;
+  /**
    * The database to use
    */
   database: dynamodb.Table;
@@ -27,11 +31,10 @@ export interface ApiStackProps extends cdk.StackProps {
  * A CloudFormation stack for API constructs
  */
 export class ApiStack extends cdk.Stack {
-  private readonly api: api_gateway.HttpApi;
   public readonly lambdaCode: lambda.CfnParametersCode;
 
-  constructor(scope: cdk.Construct, appName: string, props: ApiStackProps) {
-    super(scope, `${appName}ApiStack`, props);
+  constructor(scope: cdk.Construct, props: ApiStackProps) {
+    super(scope, "AppStack", props);
 
     const handlerName = props.handlerName || "index.handler";
     this.lambdaCode = lambda.Code.fromCfnParameters();
@@ -57,8 +60,10 @@ export class ApiStack extends cdk.Stack {
       deploymentConfig: codedeploy.LambdaDeploymentConfig.LINEAR_10PERCENT_EVERY_1MINUTE,
     });
 
-    this.api = new api_gateway.HttpApi(this, `${appName}Api`, {
-      defaultIntegration: new api_gateway.LambdaProxyIntegration({
+    new api_gateway.HttpRoute(this, "DefaultRoute", {
+      httpApi: props.apiGateway,
+      routeKey: api_gateway.HttpRouteKey.DEFAULT,
+      integration: new api_gateway.LambdaProxyIntegration({
         handler: handler,
       }),
     });

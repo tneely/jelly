@@ -25,8 +25,8 @@ export class DistributionStack extends cdk.Stack {
   public readonly siteBucket: s3.Bucket;
   public readonly distribution: cloudfront.CloudFrontWebDistribution;
 
-  constructor(scope: cdk.Construct, appName: string, props?: DistributionStackProps) {
-    super(scope, `${appName}DistributionStack`, props);
+  constructor(scope: cdk.Construct, props?: DistributionStackProps) {
+    super(scope, "DistributionStack", props);
 
     const errorResponseCode = props?.errorConfig?.responseCode || 200;
     const errorResponsePath = props?.errorConfig?.responsePath || "/index.html";

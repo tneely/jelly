@@ -8,8 +8,8 @@ export interface RoutingStackProps extends cdk.StackProps {}
  */
 export class RoutingStack extends cdk.Stack {
   private readonly hostedZone: route53.HostedZone;
-  constructor(scope: cdk.Construct, appName: string, props?: RoutingStackProps) {
-    super(scope, `${appName}RoutingStack`, props);
+  constructor(scope: cdk.Construct, props?: RoutingStackProps) {
+    super(scope, "RoutingStack", props);
 
     this.hostedZone = new route53.HostedZone(this, "Placeholder", {
       zoneName: "placeholder.com",

@@ -6,30 +6,42 @@ import {
   StackDeployStage,
   SelfUpdateStage,
   SourceStage,
-  SiteUpdateStage,
   ApiUpdateStage,
+  SiteUpdateStage,
 } from "./stages";
-import { GithubDetails } from "../../shapes/github-details";
-import { DistributionStack, AuthStack, ApiStack, DataStack, RoutingStack } from "../";
+import { RepositoryDetails } from "../../shapes/repository-details";
+import {
+  DistributionStack,
+  AuthStack,
+  DataStack,
+  RoutingStack,
+  ApiStack,
+  ApiGatewayStack,
+} from "..";
+
 export interface PipelineStackProps extends cdk.StackProps {
-  apiKey: string;
-  cdkGithub: GithubDetails;
-  appGithub: GithubDetails;
-  // Independent Stacks
-  distributionStack: DistributionStack;
-  authStack: AuthStack;
-  dataStack: DataStack;
-  // Dependent Stacks
-  apiStack: ApiStack;
-  routingStack: RoutingStack; // Independent???
+  readonly appName: string;
+  readonly repoApiKey: string;
+  readonly cdkRepo: RepositoryDetails;
+  readonly appRepo: RepositoryDetails;
+  readonly stacks: {
+    // Primary Stacks
+    readonly distributionStack: DistributionStack;
+    readonly authStack: AuthStack;
+    readonly dataStack: DataStack;
+    readonly routingStack: RoutingStack; // Independent???
+    readonly apiGatewayStack: ApiGatewayStack;
+    // Secondary Stacks
+    readonly apiStack: ApiStack;
+  };
 }
 
 /**
  * A CloudFormation stack for pipeline constructs
  */
 export class PipelineStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, appName: string, props: PipelineStackProps) {
-    super(scope, `${appName}PipelineStack`, props);
+  constructor(scope: cdk.Construct, props: PipelineStackProps) {
+    super(scope, "PipelineStack", props);
 
     const pipeline = new codepipeline.Pipeline(this, "Pipeline", {
       restartExecutionOnUpdate: true,
@@ -39,30 +51,31 @@ export class PipelineStack extends cdk.Stack {
     const appSourceOutput = new codepipeline.Artifact("AppSourceOutput");
     pipeline.addStage(
       new SourceStage({
-        apiKey: props.apiKey,
+        apiKey: props.repoApiKey,
         sources: {
-          cdk: {
+          CDK: {
             output: cdkSourceOutput,
-            github: props.cdkGithub,
+            github: props.cdkRepo,
           },
-          app: {
+          App: {
             output: appSourceOutput,
-            github: props.appGithub,
+            github: props.appRepo,
           },
         },
       })
     );
 
-    const cdkProject = new codebuild.PipelineProject(this, `${appName}`);
+    const cdkProject = new codebuild.PipelineProject(this, `${props.appName}-CDK`);
     const cdkBuildOutput = new codepipeline.Artifact("CdkBuildOutput");
     pipeline.addStage(
       new BuildStage({
+        name: "CDK",
         project: cdkProject,
         input: cdkSourceOutput,
         outputs: [cdkBuildOutput],
         env: {
-          GITHUB_API_KEY: {
-            value: props.apiKey,
+          REPOSITORY_API_KEY: {
+            value: props.repoApiKey,
           },
         },
       })
@@ -78,15 +91,22 @@ export class PipelineStack extends cdk.Stack {
     pipeline.addStage(
       new StackDeployStage({
         input: cdkBuildOutput,
-        stacks: [props.authStack, props.dataStack, props.distributionStack],
+        stacks: [
+          props.stacks.authStack,
+          props.stacks.dataStack,
+          props.stacks.distributionStack,
+          props.stacks.apiGatewayStack,
+          props.stacks.routingStack,
+        ],
       })
     );
 
-    const appProject = new codebuild.PipelineProject(this, "AppProject");
+    const appProject = new codebuild.PipelineProject(this, `${props.appName}-App`);
     const apiBuildOutput = new codepipeline.Artifact("ApiBuildOutput");
     const siteBuildOutput = new codepipeline.Artifact("SiteBuildOutput");
     pipeline.addStage(
       new BuildStage({
+        name: "App",
         project: appProject,
         input: appSourceOutput,
         // TODO: Build site and api separately?
@@ -96,13 +116,13 @@ export class PipelineStack extends cdk.Stack {
             value: this.region,
           },
           REACT_APP_USER_POOL_ID: {
-            value: props.authStack.userPool,
+            value: props.stacks.authStack.userPool.userPoolId,
           },
           REACT_APP_USER_POOL_CLIENT_ID: {
-            value: props.authStack.userPoolClient,
+            value: props.stacks.authStack.userPoolClient.userPoolClientId,
           },
           REACT_APP_API_INVOKE_URL: {
-            value: props.apiStack,
+            value: props.stacks.apiGatewayStack.api.httpApiId,
           },
         },
       })
@@ -112,15 +132,15 @@ export class PipelineStack extends cdk.Stack {
       new ApiUpdateStage({
         cdkInput: cdkBuildOutput,
         apiInput: apiBuildOutput,
-        apiStack: props.apiStack,
+        apiStack: props.stacks.apiStack,
       })
     );
 
     pipeline.addStage(
       new SiteUpdateStage(this, {
         input: siteBuildOutput,
-        bucket: props.distributionStack.siteBucket,
-        distribution: props.distributionStack.distribution,
+        bucket: props.stacks.distributionStack.siteBucket,
+        distribution: props.stacks.distributionStack.distribution,
       })
     );
   }

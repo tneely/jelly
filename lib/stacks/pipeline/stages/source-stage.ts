@@ -1,14 +1,14 @@
 import * as cdk from "@aws-cdk/core";
 import * as codepipeline from "@aws-cdk/aws-codepipeline";
 import * as codepipeline_actions from "@aws-cdk/aws-codepipeline-actions";
-import { GithubDetails } from "../../../shapes/github-details";
+import { RepositoryDetails } from "../../../shapes/repository-details";
 
 export interface SourceStageProps {
   apiKey: string;
   sources: {
     [sourceName: string]: {
       output: codepipeline.Artifact;
-      github: GithubDetails;
+      github: RepositoryDetails;
     };
   };
 }

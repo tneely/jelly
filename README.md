@@ -36,3 +36,6 @@ The CodePipeline will build your project according to the `buildspec.yml` file y
 - REACT_APP_API_INVOKE_URL: The API Gateway URL that backs your website
 
 TODO: Add versioning, bake time to code deployments
+TODO: Support tags
+TODO: support non-github repos
+TODO: Consistent naming
