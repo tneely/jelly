@@ -13,7 +13,7 @@ node_modules
 .cdk.staging
 cdk.out
 
-# Parcel build directories
+# Build directories
 .cache
 .build
 build
