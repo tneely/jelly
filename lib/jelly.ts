@@ -27,6 +27,9 @@ export class Jelly extends Construct {
   public readonly apiStack: ApiStack;
 
   constructor(scope: Construct, props: JellyProps) {
+    if (props.repositoryApiKey == undefined) {
+      throw new Error("API key is undefined");
+    }
     super(scope, `Jelly-${props.appName}`);
     this.authStack = new AuthStack(this, { appName: props.appName });
     this.dataStack = new DataStack(this);
