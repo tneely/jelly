@@ -49,6 +49,9 @@ export class PipelineStack extends cdk.Stack {
 
     const cdkSourceOutput = new codepipeline.Artifact("CdkSourceOutput");
     const appSourceOutput = new codepipeline.Artifact("AppSourceOutput");
+    // TODO: break into two pipelines so app changes don't trigger the full pipeline?
+    // This saves CDK build time, but ultimately doesn't change much, since other resources should
+    // be untouched. Is this worth the complexity of passing the api update stack build between pipelines?
     pipeline.addStage(
       new SourceStage({
         apiKey: props.repoApiKey,
@@ -122,7 +125,7 @@ export class PipelineStack extends cdk.Stack {
             value: props.stacks.authStack.userPoolClient.userPoolClientId,
           },
           REACT_APP_API_INVOKE_URL: {
-            value: props.stacks.apiGatewayStack.api.httpApiId,
+            value: props.stacks.apiGatewayStack.api.url,
           },
         },
       })

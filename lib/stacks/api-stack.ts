@@ -34,7 +34,7 @@ export class ApiStack extends cdk.Stack {
   public readonly lambdaCode: lambda.CfnParametersCode;
 
   constructor(scope: cdk.Construct, props: ApiStackProps) {
-    super(scope, "AppStack", props);
+    super(scope, "ApiStack", props);
 
     const handlerName = props.handlerName || "index.handler";
     this.lambdaCode = lambda.Code.fromCfnParameters();
