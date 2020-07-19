@@ -45,7 +45,7 @@ class PipelineStack extends cdk.Stack {
             artifact: apiBuildArtifact,
           },
           {
-            directory: "packages/site/build",
+            directory: "packages/app/build",
             artifact: siteBuildArtifact,
           },
         ],
@@ -65,11 +65,15 @@ class PipelineStack extends cdk.Stack {
         actionName: "UploadApi",
         bucket: apiBucket,
         input: apiBuildArtifact,
+        extract: false,
+        objectKey: apiBucketKey,
       }),
       new codepipeline_actions.S3DeployAction({
         actionName: "UploadSite",
         bucket: siteBucket,
         input: siteBuildArtifact,
+        extract: false,
+        objectKey: siteBucketKey,
       })
     );
 
