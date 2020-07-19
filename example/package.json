@@ -3,7 +3,8 @@
   "private": true,
   "scripts": {
     "bootstrap": "lerna bootstrap",
-    "build": "lerna run build"
+    "build": "lerna run build",
+    "synth": "lerna run synth"
   },
   "devDependencies": {
     "lerna": "^3.22.1"

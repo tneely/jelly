@@ -1,21 +1,11 @@
 *.js
 !jest.config.js
-!.prettierrc.js
-!.eslintrc.js
 *.d.ts
-!lib/shapes/*.d.ts
 node_modules
-
-# Editors
-.vscode
 
 # CDK asset staging directory
 .cdk.staging
 cdk.out
 
-# Build directories
-.cache
-.build
-build
-.dist
-dist
+# Parcel default cache directory
+.parcel-cache

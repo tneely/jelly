@@ -5,9 +5,9 @@ import { Api, Authentication, Database, Cdn } from "./constructs";
 
 export interface JellyProps extends cdk.StackProps {
   readonly appName: string;
-  readonly apiBucket: s3.Bucket;
+  readonly apiBucket: s3.IBucket;
   readonly apiBucketKey: string;
-  readonly siteBucket: s3.Bucket;
+  readonly siteBucket: s3.IBucket;
   readonly siteBucketKey: string;
   readonly apiDomainName?: string;
   readonly siteDomainName?: string;

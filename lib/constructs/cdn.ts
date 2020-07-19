@@ -6,7 +6,7 @@ import * as routeAlias from "@aws-cdk/aws-route53-targets";
 import { Routing } from "./routing";
 
 export interface CdnProps {
-  readonly siteBucket: s3.Bucket;
+  readonly siteBucket: s3.IBucket;
   readonly siteBucketKey: string;
   readonly domainName?: string;
 }

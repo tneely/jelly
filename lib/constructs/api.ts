@@ -7,8 +7,8 @@ import * as codedeploy from "@aws-cdk/aws-codedeploy";
 import * as routeAlias from "@aws-cdk/aws-route53-targets";
 import * as route53 from "@aws-cdk/aws-route53";
 import { Authentication } from ".";
-import { InlineCodeFromFile } from "./inline-code-from-file";
 import { Routing } from "./routing";
+import * as path from "path";
 
 export interface ApiProps {
   /**
@@ -30,7 +30,7 @@ export interface ApiProps {
   /**
    * Bucket containing the handler code
    */
-  apiBucket: s3.Bucket;
+  apiBucket: s3.IBucket;
   /**
    * Bucket key containing the handler code
    */
@@ -51,7 +51,7 @@ export interface ApiProps {
  * TODO: import model?, break up into stacks if resource count gets too high
  */
 export class Api extends cdk.Construct {
-  public readonly restApi: any;
+  public readonly restApi: apig.RestApi;
   public readonly handler: lambda.Function;
   public readonly routing?: Routing;
 
@@ -80,8 +80,10 @@ export class Api extends cdk.Construct {
       deploymentConfig: codedeploy.LambdaDeploymentConfig.LINEAR_10PERCENT_EVERY_1MINUTE,
     });
 
-    this.restApi = new apig.LambdaRestApi(this, "Api", {
-      handler: this.handler,
+    this.restApi = new apig.RestApi(this, "Api");
+    const api = this.restApi.root.addResource("api");
+    api.addProxy({
+      defaultIntegration: new apig.LambdaIntegration(this.handler),
     });
 
     if (props.domainName) {
@@ -101,7 +103,7 @@ export class Api extends cdk.Construct {
     const authHandler = new lambda.Function(this, "AuthHandler", {
       handler: "index.handler",
       runtime: lambda.Runtime.NODEJS_12_X,
-      code: new InlineCodeFromFile("lambda/authentication.ts"),
+      code: lambda.Code.fromAsset(path.join(__dirname, "../lambda/authentication")),
       environment: {
         USER_POOL_ID: props.auth.userPool.userPoolId,
         USER_POOL_CLIENT_ID: props.auth.userPoolClient.userPoolClientId,
