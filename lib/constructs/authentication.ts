@@ -1,19 +1,19 @@
 import * as cdk from "@aws-cdk/core";
 import * as cognito from "@aws-cdk/aws-cognito";
 
-export interface AuthStackProps extends cdk.StackProps {
+export interface AuthenticationProps extends cdk.StackProps {
   appName: string;
 }
 
 /**
  * A CloudFormation stack for auth constructs
  */
-export class AuthStack extends cdk.Stack {
+export class Authentication extends cdk.Construct {
   public readonly userPool: cognito.UserPool;
   public readonly userPoolClient: cognito.UserPoolClient;
 
-  constructor(scope: cdk.Construct, props: AuthStackProps) {
-    super(scope, "AuthStack", props);
+  constructor(scope: cdk.Construct, props: AuthenticationProps) {
+    super(scope, "Authentication");
 
     // Set up Cognito user pool and client to authenticate users
     this.userPool = new cognito.UserPool(this, "WebsiteUserPool", {

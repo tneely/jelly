@@ -1,7 +1,7 @@
 import * as cdk from "@aws-cdk/core";
 import * as codepipeline from "@aws-cdk/aws-codepipeline";
 import * as codepipeline_actions from "@aws-cdk/aws-codepipeline-actions";
-import { RepositoryDetails } from "../../../shapes/repository-details";
+import { RepositoryDetails } from "../../../model/repository-details";
 
 export interface SourceStageProps {
   apiKey: string;
@@ -17,7 +17,7 @@ export class SourceStage implements codepipeline.StageOptions {
   public readonly stageName: string;
   public readonly actions: codepipeline.IAction[];
   constructor(props: SourceStageProps) {
-    this.stageName = "Sources";
+    this.stageName = "Source";
     this.actions = Object.keys(props.sources).map(
       (sourceName) =>
         new codepipeline_actions.GitHubSourceAction({

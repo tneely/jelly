@@ -1,60 +1,45 @@
-import { Construct, Tag } from "@aws-cdk/core";
-import { RepositoryDetails } from "./shapes/repository-details";
-import {
-  AuthStack,
-  DataStack,
-  DistributionStack,
-  RoutingStack,
-  PipelineStack,
-  ApiGatewayStack,
-  ApiStack,
-} from "./stacks";
+import * as cdk from "@aws-cdk/core";
+import * as s3 from "@aws-cdk/aws-s3";
 
-export interface JellyProps {
+import { Api, Authentication, Database, Cdn } from "./constructs";
+
+export interface JellyProps extends cdk.StackProps {
   readonly appName: string;
-  readonly repositoryApiKey: string;
-  readonly infrastructureRepository: RepositoryDetails;
-  readonly applicationRepository: RepositoryDetails;
+  readonly apiBucket: s3.Bucket;
+  readonly apiBucketKey: string;
+  readonly siteBucket: s3.Bucket;
+  readonly siteBucketKey: string;
+  readonly apiDomainName?: string;
+  readonly siteDomainName?: string;
 }
 
-export class Jelly extends Construct {
-  public readonly authStack: AuthStack;
-  public readonly dataStack: DataStack;
-  public readonly distributionStack: DistributionStack;
-  public readonly apiGatewayStack: ApiGatewayStack;
-  public readonly routingStack: RoutingStack;
-  public readonly pipelineStack: PipelineStack;
-  public readonly apiStack: ApiStack;
+/**
+ * TODO: Add documentation, should this be a stack?
+ */
+export class Jelly extends cdk.Stack {
+  public readonly api: Api;
+  public readonly auth: Authentication;
+  public readonly database: Database;
+  public readonly cdn: Cdn;
 
-  constructor(scope: Construct, props: JellyProps) {
-    if (props.repositoryApiKey == undefined) {
-      throw new Error("API key is undefined");
-    }
-    super(scope, `Jelly-${props.appName}`);
-    this.authStack = new AuthStack(this, { appName: props.appName });
-    this.dataStack = new DataStack(this);
-    this.distributionStack = new DistributionStack(this);
-    this.apiGatewayStack = new ApiGatewayStack(this, { appName: props.appName });
-    this.routingStack = new RoutingStack(this);
-    this.apiStack = new ApiStack(this, {
-      apiGateway: this.apiGatewayStack.api,
-      database: this.dataStack.table,
+  constructor(scope: cdk.Construct, props: JellyProps) {
+    super(scope, "Jelly", props);
+    this.database = new Database(this);
+    this.cdn = new Cdn(this, {
+      siteBucket: props.siteBucket,
+      siteBucketKey: props.siteBucketKey,
+      domainName: props.siteDomainName,
     });
-    this.pipelineStack = new PipelineStack(this, {
+    this.auth = new Authentication(this, {
       appName: props.appName,
-      repoApiKey: props.repositoryApiKey,
-      cdkRepo: props.infrastructureRepository,
-      appRepo: props.applicationRepository,
-      stacks: {
-        authStack: this.authStack,
-        dataStack: this.dataStack,
-        distributionStack: this.distributionStack,
-        apiGatewayStack: this.apiGatewayStack,
-        routingStack: this.routingStack,
-        apiStack: this.apiStack,
-      },
     });
-
-    Tag.add(this, "app", props.appName);
+    this.api = new Api(this, {
+      apiBucket: props.apiBucket,
+      apiBucketKey: props.apiBucketKey,
+      database: this.database.table,
+      domainName: props.apiDomainName,
+      rootHostedZone: this.cdn.routing?.hostedZone,
+      auth: this.auth,
+    });
   }
 }

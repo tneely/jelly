@@ -1,0 +1,24 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - echo "Installing source NPM dependencies..."
+      - npm install
+  pre_build:
+    commands:
+      - npm run-script bootstrap
+  build:
+    commands:
+      - echo "Building projects..."
+      - npm run-script build
+artifacts:
+  secondary-artifacts:
+    SiteBuildOutput:
+      base-directory: packages/app/build
+      files:
+        - "**/*"
+    ApiBuildOutput:
+      base-directory: packages/api/dist
+      files:
+        - "**/*"

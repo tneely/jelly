@@ -11,14 +11,14 @@ export interface DistributionInvalidateActionProps extends codepipeline.CommonAw
 
 export class DistributionInvalidateAction extends codepipeline_actions.LambdaInvokeAction {
   constructor(scope: cdk.Construct, props: DistributionInvalidateActionProps) {
-    const invalidateLambda = new lambda.SingletonFunction(scope, "InvalidateFunction", {
+    const invalidateFunction = new lambda.SingletonFunction(scope, "InvalidateFunction", {
       uuid: "cloudfront-distribution-invalidation-function",
       runtime: lambda.Runtime.NODEJS_12_X,
       handler: "index.handler",
-      code: new InlineCodeFromFile("lib/lambda/distribution-invalidate.ts"),
+      code: new InlineCodeFromFile("lambda/distribution-invalidate.ts"),
     });
 
-    invalidateLambda.addToRolePolicy(
+    invalidateFunction.addToRolePolicy(
       new iam.PolicyStatement({
         actions: ["cloudfront:CreateInvalidation"],
         resources: ["*"],
@@ -26,7 +26,7 @@ export class DistributionInvalidateAction extends codepipeline_actions.LambdaInv
     );
 
     super({
-      lambda: invalidateLambda,
+      lambda: invalidateFunction,
       userParameters: {
         DISTRIBUTION_ID: props.distributionId,
       },
