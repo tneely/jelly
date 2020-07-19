@@ -41,11 +41,11 @@ class PipelineStack extends cdk.Stack {
         synthCommand: "npm run synth",
         additionalArtifacts: [
           {
-            directory: "api/dist",
+            directory: "packages/api/dist",
             artifact: apiBuildArtifact,
           },
           {
-            directory: "site/build",
+            directory: "packages/site/build",
             artifact: siteBuildArtifact,
           },
         ],
