@@ -92,12 +92,12 @@ export class Api extends cdk.Construct {
         rootHostedZone: props.rootHostedZone,
       });
 
-      this.routing.addAliasTarget(new routeAlias.ApiGateway(this.restApi));
-
       this.restApi.addDomainName("CustomDomain", {
         domainName: props.domainName,
         certificate: this.routing.certificate,
       });
+
+      this.routing.addAliasTarget(new routeAlias.ApiGateway(this.restApi));
     }
 
     const authHandler = new lambda.Function(this, "AuthHandler", {
