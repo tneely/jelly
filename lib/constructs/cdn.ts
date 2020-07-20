@@ -31,6 +31,7 @@ export class Cdn extends cdk.Construct {
     // Set up S3 bucket and Cloudfront distribution to serve website content
     this.distributionBucket = new s3.Bucket(this, "WebsiteBucket", {
       websiteIndexDocument: "index.html",
+      publicReadAccess: true,
     });
     this.distribution = new cloudfront.Distribution(this, "SiteDistribution", {
       defaultBehavior: {
