@@ -41,6 +41,20 @@ export class Cdn extends cdk.Construct {
       certificate: this.routing?.certificate,
     });
 
+    // FIXME: The new Distribution resource doesn't set SslSupportMethod when a
+    // certificate is set, causing the deployment to fail (each requires the other)
+    if (this.routing?.certificate) {
+      const cfnDistribution = this.distribution.node.children[1] as cloudfront.CfnDistribution;
+      cfnDistribution.distributionConfig = {
+        ...cfnDistribution.distributionConfig,
+        viewerCertificate: {
+          ...(cfnDistribution.distributionConfig as cloudfront.CfnDistribution.DistributionConfigProperty)
+            .viewerCertificate,
+          sslSupportMethod: "sni-only",
+        },
+      };
+    }
+
     this.routing?.addAliasTarget(
       new routeAlias.CloudFrontTarget(
         // TODO: Remove casting once CloudFrontTarget supports IDistribution
