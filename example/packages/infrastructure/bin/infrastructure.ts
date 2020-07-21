@@ -35,17 +35,16 @@ class PipelineStack extends cdk.Stack {
       synthAction: pipelines.SimpleSynthAction.standardNpmSynth({
         sourceArtifact,
         cloudAssemblyArtifact,
-        subdirectory: "example",
-        installCommand: "npm ci && npm run bootstrap",
-        buildCommand: "npm run build",
-        synthCommand: "npm run synth",
+        installCommand: "npm ci && npm run install-example",
+        buildCommand: "npm run build && npm run build-example",
+        synthCommand: "npm run synth-example",
         additionalArtifacts: [
           {
-            directory: "packages/api/dist",
+            directory: "example/packages/api/dist",
             artifact: apiBuildArtifact,
           },
           {
-            directory: "packages/app/build",
+            directory: "example/packages/app/build",
             artifact: siteBuildArtifact,
           },
         ],

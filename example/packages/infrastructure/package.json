@@ -9,7 +9,7 @@
     "watch": "tsc -w",
     "test": "jest",
     "cdk": "cdk",
-    "synth": "cdk synth && mv cdk.out ../../cdk.out"
+    "synth": "cdk synth && mv cdk.out ../../../cdk.out"
   },
   "devDependencies": {
     "@aws-cdk/assert": "1.52.0",
@@ -18,7 +18,7 @@
     "@aws-cdk/aws-s3": "^1.52.0",
     "@aws-cdk/pipelines": "^1.52.0",
     "@aws-cdk/core": "1.52.0",
-    "cdk-jelly": "0.6.0",
+    "cdk-jelly": "file:../../../",
     "jest": "^25.5.0",
     "ts-jest": "^25.3.1",
     "aws-cdk": "1.52.0",

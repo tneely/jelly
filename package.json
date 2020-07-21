@@ -25,7 +25,10 @@
     "lint-fix": "eslint '*/**/*.{ts,tsx}' --fix",
     "test": "jest --coverage",
     "npm": "npm",
-    "prepublish": "npm run build"
+    "prepublish": "npm run build",
+    "install-example": "cd example && npm ci && npm run bootstrap",
+    "build-example": "cd example && npm run build",
+    "synth-example": "cd example/packages/infrastructure && npm run synth"
   },
   "dependencies": {
     "@aws-cdk/core": "^1.52.0",
