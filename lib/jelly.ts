@@ -38,6 +38,7 @@ export class Jelly extends cdk.Stack {
       apiBucketKey: props.apiBucketKey,
       database: this.database.table,
       domainName: props.apiDomainName,
+      rootHostedZone: this.cdn.routing?.hostedZone,
       auth: this.auth,
     });
   }

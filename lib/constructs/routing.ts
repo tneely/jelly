@@ -4,6 +4,7 @@ import * as route53 from "@aws-cdk/aws-route53";
 
 export interface RoutingProps {
   readonly domainName: string;
+  readonly rootHostedZone?: route53.HostedZone;
 }
 
 /**
@@ -24,6 +25,14 @@ export class Routing extends cdk.Construct {
       hostedZone: this.hostedZone,
       validation: acm.CertificateValidation.fromDns(this.hostedZone),
     });
+
+    if (props.rootHostedZone) {
+      new route53.ZoneDelegationRecord(this, "ZoneDelegationRecord", {
+        zone: props.rootHostedZone,
+        recordName: props.domainName,
+        nameServers: this.hostedZone.hostedZoneNameServers!,
+      });
+    }
   }
 
   addAliasTarget(aliasTarget: route53.IAliasRecordTarget) {
