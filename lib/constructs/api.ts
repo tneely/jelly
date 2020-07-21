@@ -5,7 +5,6 @@ import * as dynamodb from "@aws-cdk/aws-dynamodb";
 import * as apig from "@aws-cdk/aws-apigateway";
 import * as codedeploy from "@aws-cdk/aws-codedeploy";
 import * as routeAlias from "@aws-cdk/aws-route53-targets";
-import * as route53 from "@aws-cdk/aws-route53";
 import { Authentication } from ".";
 import { Routing } from "./routing";
 import * as path from "path";
@@ -40,9 +39,8 @@ export interface ApiProps {
    */
   domainName?: string;
   /**
-   * The root hosted zone for the domain name
+   * The authentication construct
    */
-  rootHostedZone?: route53.HostedZone;
   auth: Authentication;
 }
 
@@ -89,7 +87,6 @@ export class Api extends cdk.Construct {
     if (props.domainName) {
       this.routing = new Routing(this, {
         domainName: props.domainName,
-        rootHostedZone: props.rootHostedZone,
       });
 
       this.restApi.addDomainName("CustomDomain", {
