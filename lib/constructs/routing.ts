@@ -12,7 +12,7 @@ export interface RoutingProps {
  */
 export class Routing extends cdk.Construct {
   public readonly hostedZone: route53.HostedZone;
-  public readonly certificate: acm.Certificate;
+  public readonly certificate: acm.ICertificate;
   constructor(scope: cdk.Construct, props: RoutingProps) {
     super(scope, "Routing");
 
@@ -20,9 +20,8 @@ export class Routing extends cdk.Construct {
       zoneName: props.domainName,
     });
 
-    this.certificate = new acm.DnsValidatedCertificate(this, "Certificate", {
+    this.certificate = new acm.Certificate(this, "Certificate", {
       domainName: props.domainName,
-      hostedZone: this.hostedZone,
       validation: acm.CertificateValidation.fromDns(this.hostedZone),
     });
 
