@@ -51,6 +51,7 @@ export class Cdn extends cdk.Construct {
           ...(cfnDistribution.distributionConfig as cloudfront.CfnDistribution.DistributionConfigProperty)
             .viewerCertificate,
           sslSupportMethod: "sni-only",
+          minimumProtocolVersion: "TLSv1",
         },
       };
     }
