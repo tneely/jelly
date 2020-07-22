@@ -44,17 +44,21 @@ export class Cdn extends cdk.Construct {
     // FIXME: The new Distribution resource doesn't set SslSupportMethod when a
     // certificate is set, causing the deployment to fail (each requires the other)
     // Alternate domain names are not set correctly as well. These are needed to route properly
+    // We also can't redirect to HTTPS from the existing distribution options
     if (this.routing?.certificate) {
-      const cfnDistribution = this.distribution.node.children[1] as cloudfront.CfnDistribution;
+      const cfnDistribution = this.distribution.node.children[1] as any;
       cfnDistribution.distributionConfig = {
         ...cfnDistribution.distributionConfig,
         viewerCertificate: {
-          ...(cfnDistribution.distributionConfig as cloudfront.CfnDistribution.DistributionConfigProperty)
-            .viewerCertificate,
+          ...cfnDistribution.distributionConfig.viewerCertificate,
           sslSupportMethod: "sni-only",
           minimumProtocolVersion: "TLSv1",
         },
         aliases: [props.domainName!],
+        defaultCacheBehavior: {
+          ...cfnDistribution.distributionConfig.defaultCacheBehavior,
+          viewerProtocolPolicy: "redirect-to-https",
+        },
       };
     }
 
