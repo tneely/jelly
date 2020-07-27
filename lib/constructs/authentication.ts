@@ -1,6 +1,6 @@
 import * as cdk from "@aws-cdk/core";
 import * as cognito from "@aws-cdk/aws-cognito";
-import * as routeAlias from "@aws-cdk/aws-route53-targets";
+// import * as routeAlias from "@aws-cdk/aws-route53-targets";
 import { Routing } from "./routing";
 
 export interface AuthenticationProps {
