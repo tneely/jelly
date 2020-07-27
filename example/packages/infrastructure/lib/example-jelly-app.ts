@@ -13,6 +13,7 @@ export class ExampleJellyApp extends cdk.Stage {
   constructor(scope: cdk.Construct, id: string, props: ExampleJellyAppProps) {
     super(scope, id, props);
 
+    // TODO: Figure out how to pass build artifacts to stack (can't because of stage restriction)
     const apiBucket = s3.Bucket.fromBucketName(this, "ApiBucket", props.apiBucketName);
     const siteBucket = s3.Bucket.fromBucketName(this, "SiteBucket", props.siteBucketName);
 
@@ -20,11 +21,9 @@ export class ExampleJellyApp extends cdk.Stage {
       appName: "ExampleJellyApp",
       apiBucket,
       apiBucketKey: props.apiBucketKey,
-      apiDomainName: "api.cdk-jelly.com",
       siteBucket,
       siteBucketKey: props.siteBucketKey,
-      siteDomainName: "cdk-jelly.com",
-      authDomainName: "auth.cdk-jelly.com",
+      domainName: "cdk-jelly.com",
     });
   }
 }

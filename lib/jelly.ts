@@ -5,13 +5,13 @@ import { Api, Authentication, Database, Cdn } from "./constructs";
 
 export interface JellyProps extends cdk.StackProps {
   readonly appName: string;
+  readonly domainName: string;
   readonly apiBucket: s3.IBucket;
   readonly apiBucketKey: string;
   readonly siteBucket: s3.IBucket;
   readonly siteBucketKey: string;
-  readonly apiDomainName?: string;
-  readonly siteDomainName?: string;
-  readonly authDomainName?: string;
+  readonly apiSubDomainPrefix?: string;
+  readonly authSubDomainPrefix?: string;
 }
 
 /**
@@ -25,23 +25,27 @@ export class Jelly extends cdk.Stack {
 
   constructor(scope: cdk.Construct, props: JellyProps) {
     super(scope, "Jelly", props);
+
+    const apiSubDomainPrefix = props.apiSubDomainPrefix ?? "api";
+    const authSubDomainPrefix = props.authSubDomainPrefix ?? "auth";
+
     this.database = new Database(this);
     this.cdn = new Cdn(this, {
       siteBucket: props.siteBucket,
       siteBucketKey: props.siteBucketKey,
-      domainName: props.siteDomainName,
+      domainName: props.domainName,
     });
     this.auth = new Authentication(this, {
       appName: props.appName,
-      domainName: props.authDomainName,
-      rootHostedZone: this.cdn.routing?.hostedZone,
+      domainName: `${authSubDomainPrefix}.${props.domainName}`,
+      rootRoute: this.cdn.routing,
     });
     this.api = new Api(this, {
       apiBucket: props.apiBucket,
       apiBucketKey: props.apiBucketKey,
       database: this.database.table,
-      domainName: props.apiDomainName,
-      rootHostedZone: this.cdn.routing?.hostedZone,
+      domainName: `${apiSubDomainPrefix}.${props.domainName}`,
+      rootRoute: this.cdn.routing,
       auth: this.auth,
     });
   }

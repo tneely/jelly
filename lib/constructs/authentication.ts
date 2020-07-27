@@ -1,12 +1,11 @@
 import * as cdk from "@aws-cdk/core";
 import * as cognito from "@aws-cdk/aws-cognito";
-import * as route53 from "@aws-cdk/aws-route53";
 import { Routing } from "./routing";
 
-export interface AuthenticationProps extends cdk.StackProps {
+export interface AuthenticationProps {
   appName: string;
   domainName?: string;
-  rootHostedZone?: route53.HostedZone;
+  rootRoute?: Routing;
 }
 
 /**
@@ -48,8 +47,10 @@ export class Authentication extends cdk.Construct {
     if (props.domainName) {
       this.routing = new Routing(this, {
         domainName: props.domainName,
-        rootHostedZone: props.rootHostedZone,
       });
+
+      props.rootRoute?.delegateSubDomain(this.routing.hostedZone);
+
       this.userPool.addDomain("AuthDomain", {
         customDomain: {
           domainName: props.domainName,

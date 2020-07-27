@@ -5,10 +5,8 @@ import * as dynamodb from "@aws-cdk/aws-dynamodb";
 import * as apig from "@aws-cdk/aws-apigateway";
 import * as codedeploy from "@aws-cdk/aws-codedeploy";
 import * as routeAlias from "@aws-cdk/aws-route53-targets";
-import * as route53 from "@aws-cdk/aws-route53";
 import { Authentication } from ".";
 import { Routing } from "./routing";
-import * as path from "path";
 
 export interface ApiProps {
   /**
@@ -40,9 +38,9 @@ export interface ApiProps {
    */
   domainName?: string;
   /**
-   * The root hosted zone for the domain name
+   * The root route for the domain
    */
-  rootHostedZone?: route53.HostedZone;
+  rootRoute?: Routing;
   auth: Authentication;
 }
 
@@ -80,16 +78,16 @@ export class Api extends cdk.Construct {
     });
 
     this.restApi = new apig.RestApi(this, "RestApi");
-    const app = this.restApi.root.addResource("app");
-    app.addProxy({
+    this.restApi.root.addProxy({
       defaultIntegration: new apig.LambdaIntegration(this.handler),
     });
 
     if (props.domainName) {
       this.routing = new Routing(this, {
         domainName: props.domainName,
-        rootHostedZone: props.rootHostedZone,
       });
+
+      props.rootRoute?.delegateSubDomain(this.routing.hostedZone);
 
       this.restApi.addDomainName("CustomDomain", {
         domainName: props.domainName,
@@ -99,18 +97,19 @@ export class Api extends cdk.Construct {
       this.routing.addAliasTarget(new routeAlias.ApiGateway(this.restApi));
     }
 
-    const authHandler = new lambda.Function(this, "AuthHandler", {
-      handler: "index.handler",
-      runtime: lambda.Runtime.NODEJS_12_X,
-      code: lambda.Code.fromAsset(path.join(__dirname, "../lambda/authentication")),
-      environment: {
-        USER_POOL_ID: props.auth.userPool.userPoolId,
-        USER_POOL_CLIENT_ID: props.auth.userPoolClient.userPoolClientId,
-      },
-    });
-    const auth = this.restApi.root.addResource("auth");
-    auth.addProxy({
-      defaultIntegration: new apig.LambdaIntegration(authHandler),
-    });
+    // TODO: Add auth lambda if custom domain in cognito doesn't work out
+    // const authHandler = new lambda.Function(this, "AuthHandler", {
+    //   handler: "index.handler",
+    //   runtime: lambda.Runtime.NODEJS_12_X,
+    //   code: lambda.Code.fromAsset(path.join(__dirname, "../lambda/authentication")),
+    //   environment: {
+    //     USER_POOL_ID: props.auth.userPool.userPoolId,
+    //     USER_POOL_CLIENT_ID: props.auth.userPoolClient.userPoolClientId,
+    //   },
+    // });
+    // const auth = this.restApi.root.addResource("auth");
+    // auth.addProxy({
+    //   defaultIntegration: new apig.LambdaIntegration(authHandler),
+    // });
   }
 }
