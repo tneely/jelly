@@ -25,6 +25,7 @@ export class Cdn extends cdk.Construct {
     if (props.domainName) {
       this.routing = new Routing(this, {
         domainName: props.domainName,
+        addWwwAlias: true,
       });
     }
 

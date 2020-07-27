@@ -1,6 +1,6 @@
 import * as cdk from "@aws-cdk/core";
 import * as cognito from "@aws-cdk/aws-cognito";
-// import * as routeAlias from "@aws-cdk/aws-route53-targets";
+import * as routeAlias from "@aws-cdk/aws-route53-targets";
 import { Routing } from "./routing";
 
 export interface AuthenticationProps {
@@ -52,14 +52,14 @@ export class Authentication extends cdk.Construct {
 
       props.rootRoute?.delegateSubDomain(this.routing.hostedZone);
 
-      // const domain = this.userPool.addDomain("AuthDomain", {
-      //   customDomain: {
-      //     domainName: props.domainName,
-      //     certificate: this.routing.certificate,
-      //   },
-      // });
-      // this.routing.addAliasTarget(new routeAlias.UserPoolDomainTarget(domain));
-      // TODO: Generate sign in URL?
+      const domain = this.userPool.addDomain("AuthDomain", {
+        customDomain: {
+          domainName: props.domainName,
+          certificate: this.routing.certificate,
+        },
+      });
+      this.routing.addAliasTarget(new routeAlias.UserPoolDomainTarget(domain));
+      // TODO: Generate sign in URL and export or something?
       // domain.signInUrl(this.userPoolClient, {
       //   redirectUri: props.rootHostedZone?.zoneName,
       // });
