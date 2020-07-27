@@ -49,10 +49,14 @@ export class Routing extends cdk.Construct {
   }
 
   delegateSubDomain(subdomainZone: route53.HostedZone) {
-    return new route53.ZoneDelegationRecord(this, "ZoneDelegationRecord", {
-      zone: this.hostedZone,
-      recordName: subdomainZone.zoneName,
-      nameServers: subdomainZone.hostedZoneNameServers!,
-    });
+    return new route53.ZoneDelegationRecord(
+      this,
+      `ZoneDelegationRecord-${subdomainZone.zoneName}`,
+      {
+        zone: this.hostedZone,
+        recordName: subdomainZone.zoneName,
+        nameServers: subdomainZone.hostedZoneNameServers!,
+      }
+    );
   }
 }
