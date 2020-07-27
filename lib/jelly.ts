@@ -11,6 +11,7 @@ export interface JellyProps extends cdk.StackProps {
   readonly siteBucketKey: string;
   readonly apiDomainName?: string;
   readonly siteDomainName?: string;
+  readonly authDomainName?: string;
 }
 
 /**
@@ -32,6 +33,8 @@ export class Jelly extends cdk.Stack {
     });
     this.auth = new Authentication(this, {
       appName: props.appName,
+      domainName: props.authDomainName,
+      rootHostedZone: this.cdn.routing?.hostedZone,
     });
     this.api = new Api(this, {
       apiBucket: props.apiBucket,

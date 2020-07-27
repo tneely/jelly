@@ -24,6 +24,7 @@ export class ExampleJellyApp extends cdk.Stage {
       siteBucket,
       siteBucketKey: props.siteBucketKey,
       siteDomainName: "cdk-jelly.com",
+      authDomainName: "auth.cdk-jelly.com",
     });
   }
 }

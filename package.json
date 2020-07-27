@@ -52,6 +52,7 @@
     "@types/node": "^12.12.53",
     "@typescript-eslint/eslint-plugin": "^2.34.0",
     "@typescript-eslint/parser": "^2.34.0",
+    "amazon-cognito-identity-js": "^4.3.3",
     "aws-cdk": "^1.54.0",
     "aws-sdk": "^2.720.0",
     "eslint": "^7.5.0",

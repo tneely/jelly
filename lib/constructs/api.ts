@@ -48,7 +48,6 @@ export interface ApiProps {
 
 /**
  * A CloudFormation stack for API constructs
- * TODO: import model?, break up into stacks if resource count gets too high
  */
 export class Api extends cdk.Construct {
   public readonly restApi: apig.RestApi;
@@ -60,7 +59,7 @@ export class Api extends cdk.Construct {
 
     const handlerName = props.handlerName || "index.handler";
 
-    this.handler = new lambda.Function(this, "ApiHandler", {
+    this.handler = new lambda.Function(this, "AppHandler", {
       handler: handlerName,
       runtime: lambda.Runtime.NODEJS_12_X,
       code: lambda.Code.fromBucket(props.apiBucket, props.apiBucketKey),
@@ -70,19 +69,19 @@ export class Api extends cdk.Construct {
     });
     props.database.grantFullAccess(this.handler);
 
-    const alias = new lambda.Alias(this, "ApiAlias", {
+    const alias = new lambda.Alias(this, "Alias", {
       aliasName: "Prod",
       version: this.handler.currentVersion,
     });
 
-    new codedeploy.LambdaDeploymentGroup(this, "ApiDeploymentGroup", {
+    new codedeploy.LambdaDeploymentGroup(this, "DeploymentGroup", {
       alias,
       deploymentConfig: codedeploy.LambdaDeploymentConfig.LINEAR_10PERCENT_EVERY_1MINUTE,
     });
 
-    this.restApi = new apig.RestApi(this, "Api");
-    const api = this.restApi.root.addResource("api");
-    api.addProxy({
+    this.restApi = new apig.RestApi(this, "RestApi");
+    const app = this.restApi.root.addResource("app");
+    app.addProxy({
       defaultIntegration: new apig.LambdaIntegration(this.handler),
     });
 
@@ -110,6 +109,8 @@ export class Api extends cdk.Construct {
       },
     });
     const auth = this.restApi.root.addResource("auth");
-    auth.addMethod("ANY", new apig.LambdaIntegration(authHandler));
+    auth.addProxy({
+      defaultIntegration: new apig.LambdaIntegration(authHandler),
+    });
   }
 }
