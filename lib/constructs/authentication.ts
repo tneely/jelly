@@ -42,6 +42,9 @@ export class Authentication extends cdk.Construct {
 
     this.userPoolClient = this.userPool.addClient("WebsiteUserPoolClient", {
       userPoolClientName: props.appName,
+      oAuth: {
+        callbackUrls: [props.rootRoute!.hostedZone.zoneName],
+      },
       // TODO: support OAuth flows?
     });
 
