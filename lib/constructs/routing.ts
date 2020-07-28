@@ -24,7 +24,7 @@ export class Routing extends cdk.Construct {
     });
 
     this.certificate = new acm.Certificate(this, "Certificate", {
-      // domainName: `*.${props.domainName}`, TODO: Wildcard certs?
+      // domainName: `*.${props.domainName}`, TODO: Wildcard certs? Pull cert out of routing construct so that we only need 1 for the whole app?
       domainName: props.domainName,
       validation: acm.CertificateValidation.fromDns(this.hostedZone),
     });
