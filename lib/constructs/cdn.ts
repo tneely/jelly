@@ -55,7 +55,8 @@ export class Cdn extends cdk.Construct {
           sslSupportMethod: "sni-only",
           minimumProtocolVersion: "TLSv1",
         },
-        aliases: [props.domainName!, `www.${props.domainName!}`],
+        // aliases: [props.domainName!, `www.${props.domainName!}`], // TODO: Add www alias once I can use wildcard certs
+        aliases: [props.domainName!],
         defaultCacheBehavior: {
           ...cfnDistribution.distributionConfig.defaultCacheBehavior,
           viewerProtocolPolicy: "redirect-to-https",
