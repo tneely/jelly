@@ -55,7 +55,7 @@ export class Cdn extends cdk.Construct {
           sslSupportMethod: "sni-only",
           minimumProtocolVersion: "TLSv1",
         },
-        aliases: [props.domainName!],
+        aliases: [props.domainName!, `www.${props.domainName!}`],
         defaultCacheBehavior: {
           ...cfnDistribution.distributionConfig.defaultCacheBehavior,
           viewerProtocolPolicy: "redirect-to-https",

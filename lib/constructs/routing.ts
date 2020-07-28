@@ -14,6 +14,8 @@ export interface RoutingProps {
 export class Routing extends cdk.Construct {
   public readonly hostedZone: route53.HostedZone;
   public readonly certificate: acm.ICertificate;
+  public readonly aliases: route53.ARecord[] = []; // TODO: Do we really need to expose this?
+
   constructor(scope: cdk.Construct, props: RoutingProps) {
     super(scope, "Routing");
 
@@ -42,10 +44,13 @@ export class Routing extends cdk.Construct {
   }
 
   addAliasTarget(aliasTarget: route53.IAliasRecordTarget) {
-    return new route53.ARecord(this, "AliasRecord", {
+    const aliasRecord = new route53.ARecord(this, "AliasRecord", {
       zone: this.hostedZone,
       target: route53.RecordTarget.fromAlias(aliasTarget),
     });
+    this.aliases.push(aliasRecord);
+
+    return aliasRecord;
   }
 
   delegateSubDomain(subdomainZone: route53.HostedZone) {
