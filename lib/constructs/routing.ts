@@ -24,7 +24,7 @@ export class Routing extends cdk.Construct {
     });
 
     this.certificate = new acm.Certificate(this, "Certificate", {
-      domainName: props.domainName,
+      domainName: `*.${props.domainName}`,
       validation: acm.CertificateValidation.fromDns(this.hostedZone),
     });
 
