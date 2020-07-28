@@ -59,10 +59,11 @@ export class Authentication extends cdk.Construct {
         },
       });
       this.routing.addAliasTarget(new routeAlias.UserPoolDomainTarget(domain));
-      // TODO: Generate sign in URL and export or something?
-      // domain.signInUrl(this.userPoolClient, {
-      //   redirectUri: props.rootHostedZone?.zoneName,
-      // });
+      new cdk.CfnOutput(this, "AuthUrl", {
+        value: domain.signInUrl(this.userPoolClient, {
+          redirectUri: props.rootRoute!.hostedZone!.zoneName,
+        }),
+      });
     }
   }
 }
