@@ -40,8 +40,6 @@ export class Jelly extends cdk.Stack {
       domainName: `${authSubDomainPrefix}.${props.domainName}`,
       rootRoute: this.cdn.routing,
     });
-    // Dependency needed so that alias exists on root domain before auth domain created
-    this.cdn.routing?.aliases.forEach((alias) => this.auth.node.addDependency(alias));
     this.api = new Api(this, {
       apiBucket: props.apiBucket,
       apiBucketKey: props.apiBucketKey,

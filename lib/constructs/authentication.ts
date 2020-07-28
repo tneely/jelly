@@ -58,6 +58,8 @@ export class Authentication extends cdk.Construct {
           certificate: this.routing.certificate,
         },
       });
+      // Dependency needed so that alias exists on root domain before auth domain created
+      props.rootRoute?.aliases.forEach((alias) => domain.node.addDependency(alias));
       this.routing.addAliasTarget(new routeAlias.UserPoolDomainTarget(domain));
       new cdk.CfnOutput(this, "AuthUrl", {
         value: domain.signInUrl(this.userPoolClient, {
