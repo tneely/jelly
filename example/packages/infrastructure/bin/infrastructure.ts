@@ -21,7 +21,7 @@ class PipelineStack extends cdk.Stack {
     const siteBuildArtifact = new codepipeline.Artifact("SiteBuildArtifact");
 
     const pipeline = new pipelines.CdkPipeline(this, "Pipeline", {
-      pipelineName: "MyAppPipeline", // TODO: Rename
+      pipelineName: "ExampleJellyAppPipeline",
       cloudAssemblyArtifact,
 
       sourceAction: new codepipeline_actions.GitHubSourceAction({
