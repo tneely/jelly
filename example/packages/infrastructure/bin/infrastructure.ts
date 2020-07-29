@@ -30,7 +30,7 @@ class PipelineStack extends cdk.Stack {
         oauthToken: cdk.SecretValue.secretsManager(gitHubOAuthToken),
         owner: "tneely",
         repo: "jelly",
-        // TODO: Point to testing branch so that I don't commit all these tweaks to master
+        branch: "development",
       }),
 
       synthAction: pipelines.SimpleSynthAction.standardNpmSynth({
