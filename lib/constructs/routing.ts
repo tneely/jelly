@@ -1,68 +1,36 @@
 import * as cdk from "@aws-cdk/core";
-import * as acm from "@aws-cdk/aws-certificatemanager";
-import * as route53 from "@aws-cdk/aws-route53";
-// import * as route53_patterns from "@aws-cdk/aws-route53-patterns";
+import { RootDomain } from "./root-domain";
+import { Domain } from "./domain";
 
 export interface RoutingProps {
-  readonly domainName: string;
-  readonly addWwwAlias?: boolean;
+  domainName: string;
+  apiSubdomainPrefix?: string;
+  authSubdomainPrefix?: string;
 }
 
 /**
  * A CloudFormation stack for routing constructs
  */
 export class Routing extends cdk.Construct {
-  public readonly hostedZone: route53.HostedZone;
-  public readonly certificate: acm.ICertificate;
-  public readonly aliases: route53.ARecord[] = []; // TODO: Do we really need to expose this?
+  public readonly rootDomain: RootDomain;
+  public readonly apiDomain: Domain;
+  public readonly authDomain: Domain;
 
   constructor(scope: cdk.Construct, props: RoutingProps) {
     super(scope, "Routing");
 
-    this.hostedZone = new route53.PublicHostedZone(this, "HostedZone", {
-      zoneName: props.domainName,
+    const apiSubDomainPrefix = props.apiSubdomainPrefix ?? "api";
+    const authSubDomainPrefix = props.authSubdomainPrefix ?? "auth";
+
+    this.rootDomain = new RootDomain(this, { domainName: props.domainName });
+    this.apiDomain = new Domain(this, "ApiDomain", {
+      domainName: `${apiSubDomainPrefix}.${props.domainName}`,
+    });
+    this.authDomain = new Domain(this, "AuthDomain", {
+      domainName: `${authSubDomainPrefix}.${props.domainName}`,
     });
 
-    this.certificate = new acm.Certificate(this, "Certificate", {
-      // domainName: `*.${props.domainName}`, TODO: Wildcard certs? Pull cert out of routing construct so that we only need 1 for the whole app?
-      domainName: props.domainName,
-      validation: acm.CertificateValidation.fromDns(this.hostedZone),
-    });
-
-    if (props.addWwwAlias) {
-      new route53.CnameRecord(this, "WwwAlias", {
-        zone: this.hostedZone,
-        recordName: `www.${props.domainName}`,
-        domainName: props.domainName,
-      });
-      // TODO: Redirect instead?
-      // new route53_patterns.HttpsRedirect(this, "WwwRedirect", {
-      //   targetDomain: props.domainName,
-      //   zone: this.hostedZone,
-      //   recordNames: [`www.${props.domainName}`],
-      // });
-    }
-  }
-
-  addAliasTarget(aliasTarget: route53.IAliasRecordTarget) {
-    const aliasRecord = new route53.ARecord(this, "AliasRecord", {
-      zone: this.hostedZone,
-      target: route53.RecordTarget.fromAlias(aliasTarget),
-    });
-    this.aliases.push(aliasRecord);
-
-    return aliasRecord;
-  }
-
-  delegateSubDomain(subdomainZone: route53.HostedZone) {
-    return new route53.ZoneDelegationRecord(
-      this,
-      `ZoneDelegationRecord-${subdomainZone.zoneName}`,
-      {
-        zone: this.hostedZone,
-        recordName: subdomainZone.zoneName,
-        nameServers: subdomainZone.hostedZoneNameServers!,
-      }
-    );
+    this.rootDomain.delegateSubDomain(this.apiDomain);
+    this.rootDomain.delegateSubDomain(this.authDomain);
   }
 }

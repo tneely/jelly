@@ -19,11 +19,17 @@ export class ExampleJellyApp extends cdk.Stage {
 
     new Jelly(this, {
       appName: "ExampleJellyApp",
-      apiBucket,
-      apiBucketKey: props.apiBucketKey,
-      siteBucket,
-      siteBucketKey: props.siteBucketKey,
-      domainName: "cdk-jelly.com",
+      api: {
+        bucket: apiBucket,
+        bucketKey: props.apiBucketKey,
+      },
+      app: {
+        bucket: siteBucket,
+        bucketKey: props.siteBucketKey,
+      },
+      domain: {
+        name: "cdk-jelly.com",
+      },
     });
   }
 }

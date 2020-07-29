@@ -5,8 +5,7 @@ import { Routing } from "./routing";
 
 export interface AuthenticationProps {
   appName: string;
-  domainName?: string;
-  rootRoute?: Routing;
+  routing?: Routing;
 }
 
 /**
@@ -15,7 +14,6 @@ export interface AuthenticationProps {
 export class Authentication extends cdk.Construct {
   public readonly userPool: cognito.UserPool;
   public readonly userPoolClient: cognito.UserPoolClient;
-  public readonly routing?: Routing;
 
   constructor(scope: cdk.Construct, props: AuthenticationProps) {
     super(scope, "Authentication");
@@ -40,33 +38,26 @@ export class Authentication extends cdk.Construct {
       },
     });
 
+    const rootDomainName = props.routing?.rootDomain.name;
     this.userPoolClient = this.userPool.addClient("WebsiteUserPoolClient", {
       userPoolClientName: props.appName,
       oAuth: {
-        callbackUrls: [`https://${props.rootRoute!.hostedZone.zoneName}`],
+        callbackUrls: rootDomainName ? [`https://${rootDomainName}`] : undefined,
       },
       // TODO: support OAuth flows?
     });
 
-    if (props.domainName) {
-      this.routing = new Routing(this, {
-        domainName: props.domainName,
-      });
-
-      props.rootRoute?.delegateSubDomain(this.routing.hostedZone);
-
+    if (props.routing) {
       const domain = this.userPool.addDomain("AuthDomain", {
         customDomain: {
-          domainName: props.domainName,
-          certificate: this.routing.certificate,
+          domainName: props.routing.authDomain.name,
+          certificate: props.routing.rootDomain.certificate,
         },
       });
-      // Dependency needed so that alias exists on root domain before auth domain created
-      props.rootRoute?.aliases.forEach((alias) => domain.node.addDependency(alias));
-      this.routing.addAliasTarget(new routeAlias.UserPoolDomainTarget(domain));
+      props.routing.authDomain.addAliasTarget(new routeAlias.UserPoolDomainTarget(domain));
       new cdk.CfnOutput(this, "AuthUrl", {
         value: domain.signInUrl(this.userPoolClient, {
-          redirectUri: props.rootRoute!.hostedZone!.zoneName,
+          redirectUri: rootDomainName!,
         }),
       });
     }

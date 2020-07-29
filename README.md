@@ -12,3 +12,5 @@ Jelly is a high level CDK construct that defines everything you'll need to deplo
 
 - Clean up package dependencies
 - Strict return types
+- Documentation
+- Expose customization options (lambda runtime, tables, etc.)

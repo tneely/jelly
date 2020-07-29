@@ -9,9 +9,6 @@ import { Authentication } from ".";
 import { Routing } from "./routing";
 
 export interface ApiProps {
-  /**
-   * Database to use
-   */
   database: dynamodb.Table;
   /**
    * Name of the lambda handler
@@ -25,22 +22,9 @@ export interface ApiProps {
    * @default lambda.Runtime.NODEJS_12_X
    */
   handlerRuntime?: lambda.Runtime;
-  /**
-   * Bucket containing the handler code
-   */
-  apiBucket: s3.IBucket;
-  /**
-   * Bucket key containing the handler code
-   */
-  apiBucketKey: string;
-  /**
-   * Domain name to use for the API
-   */
-  domainName?: string;
-  /**
-   * The root route for the domain
-   */
-  rootRoute?: Routing;
+  bucket: s3.IBucket;
+  bucketKey: string;
+  routing?: Routing;
   auth: Authentication;
 }
 
@@ -50,17 +34,17 @@ export interface ApiProps {
 export class Api extends cdk.Construct {
   public readonly restApi: apig.RestApi;
   public readonly handler: lambda.Function;
-  public readonly routing?: Routing;
 
   constructor(scope: cdk.Construct, props: ApiProps) {
     super(scope, "Api");
 
     const handlerName = props.handlerName || "index.handler";
+    const handlerRuntime = props.handlerRuntime || lambda.Runtime.NODEJS_12_X;
 
     this.handler = new lambda.Function(this, "AppHandler", {
       handler: handlerName,
-      runtime: lambda.Runtime.NODEJS_12_X,
-      code: lambda.Code.fromBucket(props.apiBucket, props.apiBucketKey),
+      runtime: handlerRuntime,
+      code: lambda.Code.fromBucket(props.bucket, props.bucketKey),
       environment: {
         DATABASE_NAME: props.database.tableName,
       },
@@ -82,34 +66,12 @@ export class Api extends cdk.Construct {
       defaultIntegration: new apig.LambdaIntegration(this.handler),
     });
 
-    if (props.domainName) {
-      this.routing = new Routing(this, {
-        domainName: props.domainName,
-      });
-
-      props.rootRoute?.delegateSubDomain(this.routing.hostedZone);
-
+    if (props.routing) {
       this.restApi.addDomainName("CustomDomain", {
-        domainName: props.domainName,
-        certificate: this.routing.certificate,
+        domainName: props.routing.apiDomain.name,
+        certificate: props.routing.rootDomain.certificate,
       });
-
-      this.routing.addAliasTarget(new routeAlias.ApiGateway(this.restApi));
+      props.routing.apiDomain.addAliasTarget(new routeAlias.ApiGateway(this.restApi));
     }
-
-    // TODO: Add auth lambda if custom domain in cognito doesn't work out
-    // const authHandler = new lambda.Function(this, "AuthHandler", {
-    //   handler: "index.handler",
-    //   runtime: lambda.Runtime.NODEJS_12_X,
-    //   code: lambda.Code.fromAsset(path.join(__dirname, "../lambda/authentication")),
-    //   environment: {
-    //     USER_POOL_ID: props.auth.userPool.userPoolId,
-    //     USER_POOL_CLIENT_ID: props.auth.userPoolClient.userPoolClientId,
-    //   },
-    // });
-    // const auth = this.restApi.root.addResource("auth");
-    // auth.addProxy({
-    //   defaultIntegration: new apig.LambdaIntegration(authHandler),
-    // });
   }
 }
