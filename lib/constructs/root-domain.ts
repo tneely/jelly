@@ -15,8 +15,9 @@ export class RootDomain extends Domain {
     super(scope, "RootDomain", props);
 
     this.certificate = new acm.Certificate(this, "Certificate", {
-      domainName: props.domainName,
-      subjectAlternativeNames: [`*.${props.domainName}`],
+      domainName: `*.${props.domainName}`,
+      // domainName: props.domainName,
+      // subjectAlternativeNames: [`*.${props.domainName}`],
       validation: acm.CertificateValidation.fromDns(this.hostedZone),
     });
 
