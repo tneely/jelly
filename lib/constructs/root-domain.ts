@@ -15,11 +15,16 @@ export class RootDomain extends Domain {
     super(scope, "RootDomain", props);
 
     this.certificate = new acm.Certificate(this, "Certificate", {
-      domainName: `*.${props.domainName}`,
-      // domainName: props.domainName,
-      // subjectAlternativeNames: [`*.${props.domainName}`],
+      domainName: props.domainName,
+      subjectAlternativeNames: [`*.${props.domainName}`],
       validation: acm.CertificateValidation.fromDns(this.hostedZone),
     });
+
+    // Temp fix until https://github.com/aws/aws-cdk/pull/9291 is released
+    console.log(this.certificate.node.children);
+    ((this.certificate.node.defaultChild as acm.CfnCertificate).domainValidationOptions as Array<
+      acm.CfnCertificate.DomainValidationOptionProperty
+    >).pop();
 
     new route53.CnameRecord(this, "WwwAlias", {
       zone: this.hostedZone,

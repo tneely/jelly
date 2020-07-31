@@ -38,11 +38,11 @@ export class Cdn extends cdk.Construct {
     // FIXME: The new Distribution doesn't allow domain names to be set. These are needed to route properly
     // We also can't redirect to HTTPS from the existing distribution options
     if (props.routing) {
-      // const rootDomainName = props.routing.rootDomain.name;
+      const rootDomainName = props.routing.rootDomain.name;
       const cfnDistribution = this.distribution.node.children[1] as any;
       cfnDistribution.distributionConfig = {
         ...cfnDistribution.distributionConfig,
-        // aliases: [rootDomainName, `www.${rootDomainName}`],
+        aliases: [rootDomainName, `www.${rootDomainName}`],
         defaultCacheBehavior: {
           ...cfnDistribution.distributionConfig.defaultCacheBehavior,
           viewerProtocolPolicy: "redirect-to-https",
