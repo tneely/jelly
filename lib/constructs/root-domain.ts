@@ -21,7 +21,6 @@ export class RootDomain extends Domain {
     });
 
     // Temp fix until https://github.com/aws/aws-cdk/pull/9291 is released
-    console.log(this.certificate.node.children);
     ((this.certificate.node.defaultChild as acm.CfnCertificate).domainValidationOptions as Array<
       acm.CfnCertificate.DomainValidationOptionProperty
     >).pop();
