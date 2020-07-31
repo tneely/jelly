@@ -42,7 +42,7 @@ export class Cdn extends cdk.Construct {
       const cfnDistribution = this.distribution.node.children[1] as any;
       cfnDistribution.distributionConfig = {
         ...cfnDistribution.distributionConfig,
-        aliases: [rootDomainName, `www.${rootDomainName}`],
+        // aliases: [`*.${rootDomainName}`], Drop the aliases so I can at least deploy the stack once
         defaultCacheBehavior: {
           ...cfnDistribution.distributionConfig.defaultCacheBehavior,
           viewerProtocolPolicy: "redirect-to-https",
