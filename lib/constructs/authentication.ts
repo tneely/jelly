@@ -57,7 +57,7 @@ export class Authentication extends cdk.Construct {
       props.routing.authDomain.addAliasTarget(new routeAlias.UserPoolDomainTarget(domain));
       new cdk.CfnOutput(this, "AuthUrl", {
         value: domain.signInUrl(this.userPoolClient, {
-          redirectUri: rootDomainName!,
+          redirectUri: `https://${rootDomainName}`,
         }),
       });
     }
