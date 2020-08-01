@@ -20,11 +20,6 @@ export class RootDomain extends Domain {
       validation: acm.CertificateValidation.fromDns(this.hostedZone),
     });
 
-    // Temp fix until https://github.com/aws/aws-cdk/pull/9291 is released
-    ((this.certificate.node.defaultChild as acm.CfnCertificate).domainValidationOptions as Array<
-      acm.CfnCertificate.DomainValidationOptionProperty
-    >).pop();
-
     new route53.CnameRecord(this, "WwwAlias", {
       zone: this.hostedZone,
       recordName: `www.${props.domainName}`,

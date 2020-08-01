@@ -16,7 +16,7 @@ export interface CdnProps {
  * A CloudFormation stack for content delivery constructs
  */
 export class Cdn extends cdk.Construct {
-  public readonly distributionBucket: s3.Bucket;
+  public readonly distributionBucket: s3.IBucket;
   public readonly distribution: cloudfront.Distribution;
 
   constructor(scope: cdk.Construct, props: CdnProps) {
