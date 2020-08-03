@@ -30,7 +30,11 @@ const getMessage = async () => {
   const items = await dbClient
     .query({
       TableName: dbName,
-      KeyConditionExpression: "*",
+      KeyConditionExpression: "id = :key",
+      ExpressionAttributeValues: {
+        ":key": "message",
+      },
+      ScanIndexForward: false,
       Limit: 10,
     })
     .promise();
@@ -43,21 +47,18 @@ const putMessage = async (payload: string | null) => {
   }
 
   const message = JSON.parse(payload).message;
-  const now = new Date();
+  const now = new Date().getTime();
   await dbClient
     .put({
       TableName: dbName,
       Item: {
-        id: generateId(now.toISOString()),
-        epoch: now.getTime(),
+        id: "message",
+        created: now,
+        ttl: getTtl(now),
         message: message.substr(0, 250),
       },
     })
     .promise();
-};
-
-const generateId = (prefix: string) => {
-  return `prefix+${Math.random()}`;
 };
 
 const buildResponse = (body: any) => {
@@ -70,4 +71,10 @@ const buildResponse = (body: any) => {
       "Access-Control-Allow-Origin": "*",
     },
   };
+};
+
+const getTtl = (currentTime: number) => {
+  const days = 7;
+  const millisInDay = 86400000;
+  return currentTime + days * millisInDay;
 };

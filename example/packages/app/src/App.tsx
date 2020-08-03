@@ -18,11 +18,11 @@ const App = () => {
     setMessages(await response.json());
   };
   const putMessage = async () => {
-    console.log("putting ", message);
     await fetch("https://api.cdk-jelly.com/messages", {
       method: "POST",
       body: JSON.stringify({ message }),
     });
+    setMessage("");
     await getMessages();
   };
 
@@ -38,14 +38,10 @@ const App = () => {
   Hub.listen("auth", (content) => {
     switch (content.payload.event) {
       case "signIn":
-        console.log(content.payload.data);
         setUser(user);
-
         break;
       case "signOut":
-        console.log(content.payload.data);
         setUser(null);
-
         break;
     }
   });
@@ -78,7 +74,7 @@ const App = () => {
           <p>
             This website was built using Jelly. You can login and logout using the button below.
             Once logged in, you'll be able to leave an anonymous message as well. Only the 10 most
-            recent messages are displayed.
+            recent messages are displayed. Messages persist for 7 days.
           </p>
           <div style={{ textAlign: "center" }}>
             {user ? (
@@ -104,10 +100,10 @@ const App = () => {
             <input type="submit" disabled={!user} />
           </form>
           <div>
-            {messages?.map((message: { id: string; message: string }) => {
+            {messages?.map((item: { message: string }, index: number) => {
               return (
-                <p key={message.id} className="message">
-                  {message.message}
+                <p key={index} className="message">
+                  {item.message}
                 </p>
               );
             })}
