@@ -9,14 +9,27 @@ import "./App.css";
 Amplify.configure(awsconfig);
 const githubIcon = <FontAwesomeIcon icon={faGithub} />;
 
-function App() {
+const App = () => {
   const [user, setUser] = useState(null);
-  const messages = ["1", "2", "3"];
+  const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState([]);
+  const getMessages = async () => {
+    const response = await fetch("https://api.cdk-jelly.com/messages");
+    setMessages(await response.json());
+  };
+  const putMessage = async () => {
+    console.log("putting ", message);
+    await fetch("https://api.cdk-jelly.com/messages", {
+      method: "POST",
+      body: JSON.stringify({ message }),
+    });
+    await getMessages();
+  };
 
   useEffect(() => {
+    getMessages();
     Auth.currentAuthenticatedUser()
       .then((user) => {
-        console.log("currentAuthenticatedUser", user);
         setUser(user);
       })
       .catch(() => console.log("Not signed in"));
@@ -52,7 +65,8 @@ function App() {
             Jelly is a high-level <a href="https://aws.amazon.com/cdk/">AWS CDK</a> construct for{" "}
             <a href="https://jamstack.org/">Jamstack</a> applications. It fully leverages AWS to
             deploy distributed, scalable web applications. Jelly supports domain routing, user
-            authentication, and database-backed API calls.
+            authentication, and database-backed API calls. To get started with Jelly, follow the
+            documentation on <a href="https://github.com/tneely/jelly">GitHub</a>.
           </p>
           <p>
             <img src={jelly_design} alt="Jelly design" />
@@ -63,8 +77,8 @@ function App() {
           <h2 className="section-header">Try it out!</h2>
           <p>
             This website was built using Jelly. You can login and logout using the button below.
-            Once logged in, you'll be able to leave an anonymous message as well that will persist
-            for 30 days.
+            Once logged in, you'll be able to leave an anonymous message as well. Only the 10 most
+            recent messages are displayed.
           </p>
           <div style={{ textAlign: "center" }}>
             {user ? (
@@ -73,19 +87,31 @@ function App() {
               <button onClick={() => Auth.federatedSignIn()}>Log in</button>
             )}
           </div>
+          <form
+            style={{ textAlign: "right" }}
+            onSubmit={(e) => {
+              e.preventDefault();
+              putMessage();
+            }}
+          >
+            <textarea
+              placeholder="Enter a message!"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              maxLength={250}
+              disabled={!user}
+            />
+            <input type="submit" disabled={!user} />
+          </form>
           <div>
-            {messages.map((message, index) => {
+            {messages?.map((message: { id: string; message: string }) => {
               return (
-                <p key={index} className="message">
-                  {message}
+                <p key={message.id} className="message">
+                  {message.message}
                 </p>
               );
             })}
           </div>
-          <form style={{ textAlign: "right" }}>
-            <textarea placeholder="Enter a message!" disabled={!user} />
-            <input type="submit" disabled={!user} />
-          </form>
         </section>
       </div>
 
@@ -94,6 +120,6 @@ function App() {
       </footer>
     </div>
   );
-}
+};
 
 export default App;

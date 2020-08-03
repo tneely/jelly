@@ -1,4 +1,4 @@
-import { APIGatewayProxyHandler } from "aws-lambda";
+import { APIGatewayProxyHandler, APIGatewayProxyEvent } from "aws-lambda";
 import { DynamoDB } from "aws-sdk";
 
 const dbName = process.env.DATABASE_NAME!;
@@ -8,25 +8,19 @@ export const handler: APIGatewayProxyHandler = async (event, _context) => {
   const route = event.pathParameters?.proxy;
   switch (route) {
     case "messages":
-      const payload = await handleMessages(event.httpMethod);
-      console.log("payload: ", JSON.stringify(payload));
-      break;
+      const payload = await handleMessages(event.httpMethod, event);
+      return buildResponse(payload);
     default:
       throw new Error(`Unsupported path: ${route}`);
   }
-  return {
-    statusCode: 200,
-    body: JSON.stringify(event, null, 2),
-    isBase64Encoded: false,
-  };
 };
 
-const handleMessages = async (method: string) => {
+const handleMessages = async (method: string, event: APIGatewayProxyEvent) => {
   switch (method) {
     case "GET":
       return getMessage();
-    case "PUT":
-      return putMessage("test");
+    case "POST":
+      return putMessage(event.body);
     default:
       throw new Error(`Unsupported method: ${method}`);
   }
@@ -36,19 +30,44 @@ const getMessage = async () => {
   const items = await dbClient
     .query({
       TableName: dbName,
+      KeyConditionExpression: "*",
+      Limit: 10,
     })
     .promise();
-  return items.$response.data;
+  return items.Items;
 };
 
-const putMessage = async (message: string) => {
-  const data = await dbClient
+const putMessage = async (payload: string | null) => {
+  if (!payload || payload.length < 1) {
+    throw new Error("Must specify a message");
+  }
+
+  const message = JSON.parse(payload).message;
+  const now = new Date();
+  await dbClient
     .put({
       TableName: dbName,
       Item: {
-        message,
+        id: generateId(now.toISOString()),
+        epoch: now.getTime(),
+        message: message.substr(0, 250),
       },
     })
     .promise();
-  return data.$response.data;
+};
+
+const generateId = (prefix: string) => {
+  return `prefix+${Math.random()}`;
+};
+
+const buildResponse = (body: any) => {
+  return {
+    statusCode: 200,
+    body: JSON.stringify(body),
+    isBase64Encoded: false,
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+    },
+  };
 };

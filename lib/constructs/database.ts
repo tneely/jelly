@@ -18,6 +18,10 @@ export class Database extends cdk.Construct {
         name: "id",
         type: AttributeType.STRING,
       },
+      sortKey: {
+        name: "epoch",
+        type: AttributeType.NUMBER,
+      },
     });
 
     // TODO: Generate tables from API schema?
