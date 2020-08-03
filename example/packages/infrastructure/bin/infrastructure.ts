@@ -6,10 +6,10 @@ import * as s3 from "@aws-cdk/aws-s3";
 import { ExampleJellyApp } from "../lib/example-jelly-app";
 
 const gitHubOAuthToken = "github/token/example-jelly-app";
+// TODO: Package api/app code as assets to avoid needing these buckets/keys
 const apiBucketName = "example-jelly-app-api-bucket";
-const apiBucketKey = "api";
 const siteBucketName = "example-jelly-app-site-bucket";
-const siteBucketKey = "site";
+const assetKey = new Date().toISOString();
 
 class PipelineStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -66,23 +66,23 @@ class PipelineStack extends cdk.Stack {
         bucket: apiBucket,
         input: apiBuildArtifact,
         extract: false,
-        objectKey: apiBucketKey,
+        objectKey: assetKey,
       }),
       new codepipeline_actions.S3DeployAction({
         actionName: "UploadSite",
         bucket: siteBucket,
         input: siteBuildArtifact,
         extract: false,
-        objectKey: siteBucketKey,
+        objectKey: assetKey,
       })
     );
 
     pipeline.addApplicationStage(
       new ExampleJellyApp(this, "Prod", {
         apiBucketName,
-        apiBucketKey,
+        apiBucketKey: assetKey,
         siteBucketName,
-        siteBucketKey,
+        siteBucketKey: assetKey,
       })
     );
   }
