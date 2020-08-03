@@ -1,5 +1,6 @@
 import * as cdk from "@aws-cdk/core";
-import * as s3 from "@aws-cdk/aws-s3";
+import * as lambda from "@aws-cdk/aws-lambda";
+import * as s3deploy from "@aws-cdk/aws-s3-deployment";
 import { Jelly } from "cdk-jelly";
 
 export interface ExampleJellyAppProps extends cdk.StageProps {}
@@ -11,10 +12,10 @@ export class ExampleJellyApp extends cdk.Stage {
     new Jelly(this, {
       appName: "ExampleJellyApp",
       api: {
-        assetPath: "../api/dist",
+        code: lambda.Code.fromAsset("../api/dist"),
       },
       app: {
-        assetPath: "../app/build",
+        source: s3deploy.Source.asset("../app/build"),
       },
       domain: {
         name: "cdk-jelly.com",

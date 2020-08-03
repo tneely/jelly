@@ -21,7 +21,7 @@ export interface ApiProps {
    * @default lambda.Runtime.NODEJS_12_X
    */
   handlerRuntime?: lambda.Runtime;
-  assetPath: string;
+  code: lambda.Code;
   routing?: Routing;
   auth: Authentication;
 }
@@ -42,7 +42,7 @@ export class Api extends cdk.Construct {
     this.handler = new lambda.Function(this, "AppHandler", {
       handler: handlerName,
       runtime: handlerRuntime,
-      code: lambda.Code.fromAsset(props.assetPath),
+      code: props.code,
       environment: {
         DATABASE_NAME: props.database.tableName,
       },
