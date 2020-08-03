@@ -7,8 +7,7 @@ import * as routeAlias from "@aws-cdk/aws-route53-targets";
 import { Routing } from "./routing";
 
 export interface CdnProps {
-  bucket: s3.IBucket;
-  bucketKey: string;
+  assetPath: string;
   routing?: Routing;
 }
 
@@ -52,7 +51,7 @@ export class Cdn extends cdk.Construct {
     props.routing?.rootDomain.addAliasTarget(new routeAlias.CloudFrontTarget(this.distribution));
 
     new s3deploy.BucketDeployment(this, "DeployWithInvalidation", {
-      sources: [s3deploy.Source.bucket(props.bucket, props.bucketKey)],
+      sources: [s3deploy.Source.asset(props.assetPath)],
       destinationBucket: this.distributionBucket,
       distribution: this.distribution,
     });
