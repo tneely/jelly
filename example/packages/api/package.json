@@ -2,10 +2,10 @@
   "name": "api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc && cp -r node_modules dist/"
+    "build": "parcel build src/index.ts --no-source-maps"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +17,14 @@
   "devDependencies": {
     "@types/jsonwebtoken": "^8.5.0",
     "@types/node": "^14.0.13",
-    "aws-sdk": "^2.725.0"
+    "aws-sdk": "^2.725.0",
+    "parcel": "^2.0.0-beta.1"
+  },
+  "targets": {
+    "main": {
+      "includeNodeModules": {
+        "aws-sdk": false
+      }
+    }
   }
 }
