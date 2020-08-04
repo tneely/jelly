@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Amplify, { Auth, Hub } from "aws-amplify";
+import Amplify, { Auth, Hub, API } from "aws-amplify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
 import awsconfig from "./aws-config";
@@ -10,17 +10,22 @@ Amplify.configure(awsconfig);
 const githubIcon = <FontAwesomeIcon icon={faGithub} />;
 
 const App = () => {
-  const [user, setUser] = useState(null);
-  const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState([]);
+  const [user, setUser] = useState<any>(null);
+  const [message, setMessage] = useState<string>("");
+  const [messages, setMessages] = useState<any[]>([]);
   const getMessages = async () => {
-    const response = await fetch("https://api.cdk-jelly.com/messages");
-    setMessages(await response.json());
+    const messages = await API.get("MessageApi", "/messages", {});
+    setMessages(messages);
   };
   const putMessage = async () => {
-    await fetch("https://api.cdk-jelly.com/messages", {
-      method: "POST",
-      body: JSON.stringify({ message }),
+    await API.post("MessageApi", "/messages", {
+      body: {
+        message,
+      },
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        Authorization: (await Auth.currentSession()).getIdToken().getJwtToken(),
+      },
     });
     setMessage("");
     await getMessages();
@@ -97,7 +102,7 @@ const App = () => {
               maxLength={250}
               disabled={!user}
             />
-            <input type="submit" disabled={!user} />
+            <input type="submit" disabled={!user || message.trim().length < 1} />
           </form>
           <div>
             {messages?.map((item: { message: string }, index: number) => {
