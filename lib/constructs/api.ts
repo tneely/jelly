@@ -45,8 +45,8 @@ export class Api extends cdk.Construct {
       code: props.code,
       environment: {
         DATABASE_NAME: props.database.tableName,
-        USER_POOL_ID: props.auth.userPool.userPoolId,
         USER_POOL_URL: props.auth.userPool.userPoolProviderUrl,
+        USER_CLIENT_ID: props.auth.userPoolClient.userPoolClientId,
       },
     });
     props.database.grantFullAccess(this.handler);

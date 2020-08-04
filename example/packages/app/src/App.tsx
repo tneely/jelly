@@ -14,7 +14,11 @@ const App = () => {
   const [message, setMessage] = useState<string>("");
   const [messages, setMessages] = useState<any[]>([]);
   const getMessages = async () => {
-    const messages = await API.get("MessageApi", "/messages", {});
+    const messages = await API.get("MessageApi", "/messages", {
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+      },
+    });
     setMessages(messages);
   };
   const putMessage = async () => {

@@ -38,7 +38,7 @@ const putMessage = async (event: APIGatewayProxyEvent) => {
     throw new Error("Must specify a message");
   }
 
-  verifyCognitoJwt(event.headers.Authorization);
+  await verifyCognitoJwt(event.headers.Authorization);
 
   const message = JSON.parse(payload).message;
   const now = new Date().getTime();
