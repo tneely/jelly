@@ -51,6 +51,7 @@ new Jelly(this, {
 - Improve [Observatory score](https://observatory.mozilla.org/analyze/cdk-jelly.com)
 - GitHub actions for releases and such
 - Dashboards, alarms, etc.
+- Break verification lambda code out of example and bring it into core Jelly?
 
 ## Available Scripts
 
