@@ -34,6 +34,13 @@ new Jelly(this, {
 });
 ```
 
+### Routing
+
+If using a custom domain name, Jelly uses Route 53 to act as a DNS for your application.
+Jelly also leverages AWS Certificate Manager and CloudFormation's DNS validation to provide HTTPS across your domain and subdomains.
+
+When deploying a Jelly application for the first time, you will need to register the name servers in your root domain's hosted zone with your domain provider. The stack deployment will hang until the certificates can be verified through DNS.
+
 ## Roadmap
 
 ### Housekeeping
