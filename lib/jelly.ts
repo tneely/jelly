@@ -1,17 +1,16 @@
 import * as cdk from "@aws-cdk/core";
-import * as s3 from "@aws-cdk/aws-s3";
+import * as lambda from "@aws-cdk/aws-lambda";
+import * as s3deploy from "@aws-cdk/aws-s3-deployment";
 
 import { Api, Authentication, Database, Cdn, Routing } from "./constructs";
 
 export interface JellyProps extends cdk.StackProps {
   appName: string;
   app: {
-    bucket: s3.IBucket;
-    bucketKey: string;
+    source: s3deploy.ISource;
   };
   api: {
-    bucket: s3.IBucket;
-    bucketKey: string;
+    code: lambda.Code;
   };
   domain?: {
     name: string;
@@ -42,8 +41,7 @@ export class Jelly extends cdk.Stack {
     this.database = new Database(this);
 
     this.cdn = new Cdn(this, {
-      bucket: props.app.bucket,
-      bucketKey: props.app.bucketKey,
+      source: props.app.source,
       routing: this.routing,
     });
 
@@ -56,8 +54,7 @@ export class Jelly extends cdk.Stack {
     if (this.routing) this.auth.node.addDependency(this.cdn);
 
     this.api = new Api(this, {
-      bucket: props.api.bucket,
-      bucketKey: props.api.bucketKey,
+      code: props.api.code,
       database: this.database.table,
       routing: this.routing,
       auth: this.auth,

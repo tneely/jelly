@@ -1,5 +1,4 @@
 import * as cdk from "@aws-cdk/core";
-import * as s3 from "@aws-cdk/aws-s3";
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as dynamodb from "@aws-cdk/aws-dynamodb";
 import * as apig from "@aws-cdk/aws-apigateway";
@@ -22,8 +21,7 @@ export interface ApiProps {
    * @default lambda.Runtime.NODEJS_12_X
    */
   handlerRuntime?: lambda.Runtime;
-  bucket: s3.IBucket;
-  bucketKey: string;
+  code: lambda.Code;
   routing?: Routing;
   auth: Authentication;
 }
@@ -44,9 +42,11 @@ export class Api extends cdk.Construct {
     this.handler = new lambda.Function(this, "AppHandler", {
       handler: handlerName,
       runtime: handlerRuntime,
-      code: lambda.Code.fromBucket(props.bucket, props.bucketKey),
+      code: props.code,
       environment: {
         DATABASE_NAME: props.database.tableName,
+        USER_POOL_URL: props.auth.userPool.userPoolProviderUrl,
+        USER_CLIENT_ID: props.auth.userPoolClient.userPoolClientId,
       },
     });
     props.database.grantFullAccess(this.handler);
