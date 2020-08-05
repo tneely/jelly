@@ -1,6 +1,5 @@
 import * as cdk from "@aws-cdk/core";
 import * as route53 from "@aws-cdk/aws-route53";
-// import * as route53_patterns from "@aws-cdk/aws-route53-patterns";
 
 export interface DomainProps {
   domainName: string;
