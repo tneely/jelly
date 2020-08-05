@@ -86,6 +86,8 @@ input[type="submit"] {
   text-decoration: none;
   text-transform: uppercase;
   white-space: nowrap;
+  -webkit-appearance: none;
+  -webkit-border-radius: 0;
 }
 
 .button:focus,

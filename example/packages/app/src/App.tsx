@@ -81,7 +81,7 @@ const App = () => {
         <section>
           <h2 className="section-header">Try it out!</h2>
           <p>
-            This website was built using Jelly. You can login and logout using the button below.
+            This website was built using Jelly. You can log in and log out using the button below.
             Once logged in, you'll be able to leave an anonymous message as well. Only the 10 most
             recent messages are displayed. Messages persist for 7 days.
           </p>
@@ -106,7 +106,7 @@ const App = () => {
               maxLength={250}
               disabled={!user}
             />
-            <input type="submit" disabled={!user || message.trim().length < 1} />
+            <input type="submit" value="Submit" disabled={!user || message.trim().length < 1} />
           </form>
           <div>
             {messages?.map((item: { message: string }, index: number) => {
