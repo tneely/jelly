@@ -4,7 +4,6 @@ import * as dynamodb from "@aws-cdk/aws-dynamodb";
 import * as apig from "@aws-cdk/aws-apigateway";
 import * as codedeploy from "@aws-cdk/aws-codedeploy";
 import * as routeAlias from "@aws-cdk/aws-route53-targets";
-import { Authentication } from ".";
 import { Routing } from "./routing";
 
 export interface ApiProps {
@@ -42,9 +41,9 @@ export interface ApiProps {
   routing?: Routing;
 
   /**
-   * TODO: Remove
+   * Lambda responsible for authenticating Cognito user JWTs
    */
-  auth: Authentication;
+  authHandler: lambda.Function;
 }
 
 /**
@@ -60,17 +59,17 @@ export class Api extends cdk.Construct {
     const handlerName = props.handlerName || "index.handler";
     const handlerRuntime = props.handlerRuntime || lambda.Runtime.NODEJS_12_X;
 
-    this.handler = new lambda.Function(this, "AppHandler", {
+    this.handler = new lambda.Function(this, "ApiHandler", {
       handler: handlerName,
       runtime: handlerRuntime,
       code: props.code,
       environment: {
         DATABASE_NAME: props.database.tableName,
-        USER_POOL_URL: props.auth.userPool.userPoolProviderUrl,
-        USER_CLIENT_ID: props.auth.userPoolClient.userPoolClientId,
+        AUTH_LAMBDA_ARN: props.authHandler.functionArn,
       },
     });
     props.database.grantFullAccess(this.handler);
+    props.authHandler.grantInvoke(this.handler);
 
     const alias = new lambda.Alias(this, "Alias", {
       aliasName: "Prod",

@@ -41,6 +41,15 @@ Jelly also leverages AWS Certificate Manager and CloudFormation's DNS validation
 
 When deploying a Jelly application for the first time, you will need to register the name servers in your root domain's hosted zone with your domain provider. The stack deployment will hang until the certificates can be verified through DNS.
 
+### API
+
+The API lambda will always have two environment variables available for use.
+
+- `DATABASE_NAME` the DynamoDB table name
+- `AUTH_LAMBDA_ARN` the authentication lambda ARN
+
+The API lambda has full access to both of these resources.
+
 ## Roadmap
 
 ### Housekeeping
@@ -53,7 +62,7 @@ When deploying a Jelly application for the first time, you will need to register
 ### Enhancements
 
 - Expose customization options
-  - Lambda runtime
+  - Lambda runtime, env variables
   - Table options
 - Improve [Observatory score](https://observatory.mozilla.org/analyze/cdk-jelly.com)
 - GitHub actions for releases and such

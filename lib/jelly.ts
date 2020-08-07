@@ -56,7 +56,7 @@ export class Jelly extends cdk.Stack {
       code: props.api.code,
       database: this.database.table,
       routing: this.routing,
-      auth: this.auth,
+      authHandler: this.auth.authHandler,
     });
   }
 }

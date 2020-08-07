@@ -2,6 +2,15 @@ import * as jwt from "jsonwebtoken";
 import * as Axios from "axios";
 import jwkToPem from "jwk-to-pem";
 
+interface VerificationRequest {
+  token: string;
+}
+
+interface VerificationResponse {
+  authenticated: boolean;
+  message?: string;
+}
+
 interface TokenHeader {
   kid: string;
   alg: string;
@@ -42,14 +51,26 @@ interface MapOfKidToPublicKey {
 const cognitoClientId = `${process.env.USER_CLIENT_ID}`;
 const cognitoIssuerUrl = `${process.env.USER_POOL_URL}/.well-known/jwks.json`;
 
-export const verifyCognitoJwt = async (token?: string) => {
+export const handler = async (request: VerificationRequest): Promise<VerificationResponse> => {
+  const token = request.token;
+
   if (!token || token.length < 1) {
     throw new Error("No token present");
   }
 
-  const payload = await verifyHeaderAndGetPayload(token);
-  verifyExpiration(payload);
-  verifyAudience(payload);
+  try {
+    const payload = await verifyTokenAndGetPayload(token);
+    verifyAudience(payload);
+  } catch (e) {
+    return {
+      authenticated: false,
+      message: e.message,
+    };
+  }
+
+  return {
+    authenticated: true,
+  };
 };
 
 const verifyAndGetSections = (token: string) => {
@@ -60,7 +81,7 @@ const verifyAndGetSections = (token: string) => {
   return tokenSections;
 };
 
-const verifyHeaderAndGetPayload = async (token: string) => {
+const verifyTokenAndGetPayload = async (token: string) => {
   const tokenSections = verifyAndGetSections(token);
   const headerJSON = Buffer.from(tokenSections[0], "base64").toString("utf8");
   const header = JSON.parse(headerJSON) as TokenHeader;
@@ -85,13 +106,6 @@ const getPublicKeys = async (): Promise<MapOfKidToPublicKey> => {
     return cacheKeys;
   } else {
     return cacheKeys;
-  }
-};
-
-const verifyExpiration = (payload: Payload) => {
-  const now = Math.floor(Date.now() / 1000);
-  if (now < payload.auth_time || now > payload.exp) {
-    throw new Error("Token is expired");
   }
 };
 

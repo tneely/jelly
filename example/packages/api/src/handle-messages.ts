@@ -1,9 +1,16 @@
 import { APIGatewayProxyEvent } from "aws-lambda";
-import { DynamoDB } from "aws-sdk";
-import { verifyCognitoJwt } from "./verification";
+import { DynamoDB, Lambda } from "aws-sdk";
 
 const dbName = process.env.DATABASE_NAME!;
+const authLambdaName = process.env.AUTH_LAMBDA_ARN!;
+
 const dbClient = new DynamoDB.DocumentClient();
+const lambdaClient = new Lambda();
+
+interface VerificationResponse {
+  authenticated: boolean;
+  message?: string;
+}
 
 export const handleMessages = async (event: APIGatewayProxyEvent) => {
   switch (event.httpMethod) {
@@ -53,6 +60,23 @@ const putMessage = async (event: APIGatewayProxyEvent) => {
       },
     })
     .promise();
+};
+
+const verifyCognitoJwt = async (token: string) => {
+  const response = await lambdaClient
+    .invoke({
+      FunctionName: authLambdaName,
+      Qualifier: "Prod",
+      Payload: { token },
+    })
+    .promise();
+
+  console.log(response);
+
+  const payload: VerificationResponse = JSON.parse(response.Payload as string);
+  if (!payload.authenticated) {
+    throw new Error(`Could not authenticate user: ${payload.message}`);
+  }
 };
 
 const getTtl = (currentTime: number) => {

@@ -1,6 +1,10 @@
 import * as cdk from "@aws-cdk/core";
 import * as cognito from "@aws-cdk/aws-cognito";
 import * as routeAlias from "@aws-cdk/aws-route53-targets";
+import * as lambda from "@aws-cdk/aws-lambda";
+import * as nodeLambda from "@aws-cdk/aws-lambda-nodejs";
+import * as codedeploy from "@aws-cdk/aws-codedeploy";
+import * as path from "path";
 import { Routing } from "./routing";
 
 export interface AuthenticationProps {
@@ -20,6 +24,7 @@ export interface AuthenticationProps {
 export class Authentication extends cdk.Construct {
   public readonly userPool: cognito.UserPool;
   public readonly userPoolClient: cognito.UserPoolClient;
+  public readonly authHandler: lambda.Function;
 
   constructor(scope: cdk.Construct, props: AuthenticationProps) {
     super(scope, "Authentication");
@@ -64,5 +69,19 @@ export class Authentication extends cdk.Construct {
         }),
       });
     }
+
+    this.authHandler = new nodeLambda.NodejsFunction(this, "AuthHandler", {
+      entry: path.join(__dirname, "../lambda/authentication/index.js"),
+    });
+
+    const alias = new lambda.Alias(this, "Alias", {
+      aliasName: "Prod",
+      version: this.authHandler.currentVersion,
+    });
+
+    new codedeploy.LambdaDeploymentGroup(this, "DeploymentGroup", {
+      alias,
+      deploymentConfig: codedeploy.LambdaDeploymentConfig.LINEAR_10PERCENT_EVERY_1MINUTE,
+    });
   }
 }
