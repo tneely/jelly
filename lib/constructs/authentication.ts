@@ -74,6 +74,10 @@ export class Authentication extends cdk.Construct {
       entry: path.join(__dirname, "../lambda/authentication/index.js"),
       projectRoot: path.resolve(__dirname, "../../.."),
       minify: true,
+      environment: {
+        USER_POOL_URL: this.userPool.userPoolProviderUrl,
+        USER_CLIENT_ID: this.userPoolClient.userPoolClientId,
+      },
     });
 
     const alias = new lambda.Alias(this, "Alias", {

@@ -4,6 +4,7 @@ import { handleMessages } from "./handle-messages";
 // TODO: restrict CORS?
 
 export const handler: APIGatewayProxyHandler = async (event, _context) => {
+  console.log(JSON.stringify(event));
   if (event.httpMethod == "OPTIONS") {
     return {
       statusCode: 204,
