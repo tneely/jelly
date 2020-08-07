@@ -51,7 +51,9 @@ export class Authentication extends cdk.Construct {
     this.userPoolClient = this.userPool.addClient("UserPoolClient", {
       oAuth: {
         // TODO: support OAuth flows?
-        callbackUrls: rootDomainName ? [`https://${rootDomainName}`] : undefined,
+        callbackUrls: rootDomainName
+          ? [`https://${rootDomainName}`, `https://${rootDomainName}/`]
+          : undefined,
       },
     });
 
@@ -65,7 +67,7 @@ export class Authentication extends cdk.Construct {
       props.routing.authDomain.addAliasTarget(new routeAlias.UserPoolDomainTarget(domain));
       new cdk.CfnOutput(this, "AuthUrl", {
         value: domain.signInUrl(this.userPoolClient, {
-          redirectUri: `https://${rootDomainName}`,
+          redirectUri: `https://${rootDomainName}/`,
         }),
       });
     }
