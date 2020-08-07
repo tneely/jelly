@@ -69,6 +69,16 @@ The API lambda has full access to both of these resources.
 - Dashboards, alarms, etc.
 - Break verification lambda code out of example and bring it into core Jelly?
 
+## Troubleshooting
+
+### Auth Lambda
+
+The authentication lambda uses [NodejsFunction][4] to package its code.
+For whatever reason, this module requires Docker. If running locally, you'll need to install Docker.
+If running from CodeBuild, you'll need to run with elevated privileges (otherwise Docker access is blocked). If this becomes a large enough barrier, we can just write our own bundling code.
+
+[4]: https://docs.aws.amazon.com/cdk/api/latest/docs/aws-lambda-nodejs-readme.html
+
 ## Available Scripts
 
 In the project directory, you can run:
