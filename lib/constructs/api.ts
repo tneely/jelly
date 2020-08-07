@@ -66,6 +66,7 @@ export class Api extends cdk.Construct {
       environment: {
         DATABASE_NAME: props.database.tableName,
         AUTH_LAMBDA_ARN: props.authHandler.functionArn,
+        AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1",
       },
     });
     props.database.grantFullAccess(this.handler);
