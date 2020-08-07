@@ -8,7 +8,7 @@ interface VerificationRequest {
 
 interface VerificationResponse {
   authenticated: boolean;
-  message?: string;
+  errorMessage?: string;
 }
 
 interface TokenHeader {
@@ -64,7 +64,7 @@ export const handler = async (request: VerificationRequest): Promise<Verificatio
   } catch (e) {
     return {
       authenticated: false,
-      message: e.message,
+      errorMessage: e.message,
     };
   }
 

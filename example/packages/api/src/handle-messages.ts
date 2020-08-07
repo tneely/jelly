@@ -9,7 +9,7 @@ const lambdaClient = new Lambda();
 
 interface VerificationResponse {
   authenticated: boolean;
-  message?: string;
+  errorMessage?: string;
 }
 
 export const handleMessages = async (event: APIGatewayProxyEvent) => {
@@ -67,15 +67,13 @@ const verifyCognitoJwt = async (token: string) => {
     .invoke({
       FunctionName: authLambdaName,
       Qualifier: "Prod",
-      Payload: { token },
+      Payload: JSON.stringify({ token }),
     })
     .promise();
 
-  console.log(response);
-
   const payload: VerificationResponse = JSON.parse(response.Payload as string);
   if (!payload.authenticated) {
-    throw new Error(`Could not authenticate user: ${payload.message}`);
+    throw new Error(`Could not authenticate user: ${payload.errorMessage}`);
   }
 };
 
