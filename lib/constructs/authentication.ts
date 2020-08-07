@@ -57,6 +57,12 @@ export class Authentication extends cdk.Construct {
       },
     });
 
+    // FIXME: Introduce proper logout url config in the userpool client
+    (this.userPoolClient.node.defaultChild as cognito.CfnUserPoolClient).logoutUrLs = [
+      `https://${rootDomainName}`,
+      `https://${rootDomainName}/`,
+    ];
+
     if (props.routing) {
       const domain = this.userPool.addDomain("AuthDomain", {
         customDomain: {
