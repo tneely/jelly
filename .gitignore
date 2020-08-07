@@ -20,3 +20,4 @@ cdk.out
 build
 .dist
 dist
+.parcel-cache

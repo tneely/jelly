@@ -72,6 +72,8 @@ export class Authentication extends cdk.Construct {
 
     this.authHandler = new nodeLambda.NodejsFunction(this, "AuthHandler", {
       entry: path.join(__dirname, "../lambda/authentication/index.js"),
+      projectRoot: path.resolve(__dirname, "../../.."),
+      minify: true,
     });
 
     const alias = new lambda.Alias(this, "Alias", {
