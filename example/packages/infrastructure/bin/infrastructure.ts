@@ -2,7 +2,6 @@ import * as cdk from "@aws-cdk/core";
 import * as codepipeline from "@aws-cdk/aws-codepipeline";
 import * as codepipeline_actions from "@aws-cdk/aws-codepipeline-actions";
 import * as pipelines from "@aws-cdk/pipelines";
-import * as s3 from "@aws-cdk/aws-s3";
 import { ExampleJellyApp } from "../lib/example-jelly-app";
 
 const gitHubOAuthToken = "github/token/example-jelly-app";
@@ -33,6 +32,9 @@ class PipelineStack extends cdk.Stack {
         installCommand: "npm ci && npm run install-example",
         buildCommand: "npm run build && npm run build-example",
         synthCommand: "npm run synth-example",
+        environment: {
+          privileged: true,
+        },
       }),
     });
 
