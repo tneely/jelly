@@ -5,38 +5,15 @@ import { faGithub } from "@fortawesome/free-brands-svg-icons";
 import awsconfig from "./aws-config";
 import jelly_design from "./jelly-design.svg";
 import "./App.css";
+import { MessageBoard } from "./components/message-board";
 
 Amplify.configure(awsconfig);
 const githubIcon = <FontAwesomeIcon icon={faGithub} />;
 
 const App = () => {
   const [user, setUser] = useState<any>(null);
-  const [message, setMessage] = useState<string>("");
-  const [messages, setMessages] = useState<any[]>([]);
-  const getMessages = async () => {
-    const messages = await API.get("MessageApi", "/messages", {
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-      },
-    });
-    setMessages(messages);
-  };
-  const putMessage = async () => {
-    await API.post("MessageApi", "/messages", {
-      body: {
-        message,
-      },
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        Authorization: (await Auth.currentSession()).getIdToken().getJwtToken(),
-      },
-    });
-    setMessage("");
-    await getMessages();
-  };
 
   useEffect(() => {
-    getMessages();
     Auth.currentAuthenticatedUser()
       .then((user) => {
         setUser(user);
@@ -85,6 +62,7 @@ const App = () => {
             Once logged in, you'll be able to leave an anonymous message as well. Only the 10 most
             recent messages are displayed. Messages persist for 7 days.
           </p>
+
           <div style={{ textAlign: "center" }}>
             {user ? (
               <button onClick={() => Auth.signOut()}>Log out</button>
@@ -92,31 +70,8 @@ const App = () => {
               <button onClick={() => Auth.federatedSignIn()}>Log in</button>
             )}
           </div>
-          <form
-            style={{ textAlign: "right" }}
-            onSubmit={(e) => {
-              e.preventDefault();
-              putMessage();
-            }}
-          >
-            <textarea
-              placeholder="Enter a message!"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              maxLength={250}
-              disabled={!user}
-            />
-            <input type="submit" value="Submit" disabled={!user || message.trim().length < 1} />
-          </form>
-          <div>
-            {messages?.map((item: { message: string }, index: number) => {
-              return (
-                <p key={index} className="message">
-                  {item.message}
-                </p>
-              );
-            })}
-          </div>
+
+          <MessageBoard loggedIn={!!user} />
         </section>
       </div>
 

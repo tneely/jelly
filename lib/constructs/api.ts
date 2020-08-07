@@ -8,26 +8,47 @@ import { Authentication } from ".";
 import { Routing } from "./routing";
 
 export interface ApiProps {
+  /**
+   * The database table to be made available to the lambda
+   */
   database: dynamodb.Table;
+
   /**
    * Name of the lambda handler
    *
    * @default "index.handler"
    */
   handlerName?: string;
+
   /**
    * Runtime to use for the lambda code
    *
    * @default lambda.Runtime.NODEJS_12_X
    */
   handlerRuntime?: lambda.Runtime;
+
+  /**
+   * The lambda code to deploy
+   */
   code: lambda.Code;
+
+  /**
+   * Routing to use for custom domains
+   *
+   * If present, the RestApi will be aliased to the API domain name
+   *
+   * @default - The API will not use a custom domain name
+   */
   routing?: Routing;
+
+  /**
+   * TODO: Remove
+   */
   auth: Authentication;
 }
 
 /**
- * A CloudFormation stack for API constructs
+ * A Construct to create and deploy the application's API
  */
 export class Api extends cdk.Construct {
   public readonly restApi: apig.RestApi;

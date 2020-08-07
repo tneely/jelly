@@ -10,7 +10,6 @@ export class ExampleJellyApp extends cdk.Stage {
     super(scope, id, props);
 
     new Jelly(this, {
-      appName: "ExampleJellyApp",
       api: {
         code: lambda.Code.fromAsset("../api/dist"),
       },

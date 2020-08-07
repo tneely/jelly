@@ -5,7 +5,6 @@ import * as s3deploy from "@aws-cdk/aws-s3-deployment";
 import { Api, Authentication, Database, Cdn, Routing } from "./constructs";
 
 export interface JellyProps extends cdk.StackProps {
-  appName: string;
   app: {
     source: s3deploy.ISource;
   };
@@ -46,9 +45,9 @@ export class Jelly extends cdk.Stack {
     });
 
     this.auth = new Authentication(this, {
-      appName: props.appName,
       routing: this.routing,
     });
+
     // Dependency needed so that alias exists on root domain before auth domain created
     // (userPool.addDomain throws a fit otherwise during initial CFn deployment)
     if (this.routing) this.auth.node.addDependency(this.cdn);

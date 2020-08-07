@@ -4,12 +4,18 @@ import * as routeAlias from "@aws-cdk/aws-route53-targets";
 import { Routing } from "./routing";
 
 export interface AuthenticationProps {
-  appName: string;
+  /**
+   * Routing to use for custom domains
+   *
+   * If present, the UserPool will be aliased to the auth domain name
+   *
+   * @default - The UserPool will not use a custom domain name
+   */
   routing?: Routing;
 }
 
 /**
- * A CloudFormation stack for auth constructs
+ * A Construct to create the application's user authentication
  */
 export class Authentication extends cdk.Construct {
   public readonly userPool: cognito.UserPool;
@@ -18,9 +24,7 @@ export class Authentication extends cdk.Construct {
   constructor(scope: cdk.Construct, props: AuthenticationProps) {
     super(scope, "Authentication");
 
-    // Set up Cognito user pool and client to authenticate users
-    this.userPool = new cognito.UserPool(this, "WebsiteUserPool", {
-      userPoolName: `${props.appName}UserPool`,
+    this.userPool = new cognito.UserPool(this, "UserPool", {
       selfSignUpEnabled: true,
       standardAttributes: {
         email: {
@@ -39,12 +43,11 @@ export class Authentication extends cdk.Construct {
     });
 
     const rootDomainName = props.routing?.rootDomain.name;
-    this.userPoolClient = this.userPool.addClient("WebsiteUserPoolClient", {
-      userPoolClientName: props.appName,
+    this.userPoolClient = this.userPool.addClient("UserPoolClient", {
       oAuth: {
+        // TODO: support OAuth flows?
         callbackUrls: rootDomainName ? [`https://${rootDomainName}`] : undefined,
       },
-      // TODO: support OAuth flows?
     });
 
     if (props.routing) {

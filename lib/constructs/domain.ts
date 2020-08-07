@@ -2,11 +2,14 @@ import * as cdk from "@aws-cdk/core";
 import * as route53 from "@aws-cdk/aws-route53";
 
 export interface DomainProps {
+  /**
+   * The domain name to create in Route53
+   */
   domainName: string;
 }
 
 /**
- * A CloudFormation stack for routing constructs
+ * A Construct to create and host the application's custom domain
  */
 export class Domain extends cdk.Construct {
   public readonly hostedZone: route53.HostedZone;

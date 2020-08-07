@@ -5,7 +5,7 @@ import { AttributeType } from "@aws-cdk/aws-dynamodb";
 export interface DatabaseProps {}
 
 /**
- * A CloudFormation stack for data constructs
+ * A Construct to create the application's databases
  */
 export class Database extends cdk.Construct {
   public readonly table: dynamodb.Table;
@@ -24,7 +24,5 @@ export class Database extends cdk.Construct {
       },
       timeToLiveAttribute: "ttl",
     });
-
-    // TODO: Generate tables from API schema?
   }
 }

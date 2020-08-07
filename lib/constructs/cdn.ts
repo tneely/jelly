@@ -7,12 +7,23 @@ import * as routeAlias from "@aws-cdk/aws-route53-targets";
 import { Routing } from "./routing";
 
 export interface CdnProps {
+  /**
+   * The source code to distribute
+   */
   source: s3deploy.ISource;
+
+  /**
+   * Routing to use for custom domains
+   *
+   * If present, the Distribution will be aliased to the app domain name
+   *
+   * @default - The Distribution will not use a custom domain name
+   */
   routing?: Routing;
 }
 
 /**
- * A CloudFormation stack for content delivery constructs
+ * A Construct to create and deploy the application's CDN
  */
 export class Cdn extends cdk.Construct {
   public readonly distributionBucket: s3.IBucket;
@@ -21,12 +32,12 @@ export class Cdn extends cdk.Construct {
   constructor(scope: cdk.Construct, props: CdnProps) {
     super(scope, "Cdn");
 
-    // Set up S3 bucket and Cloudfront distribution to serve website content
-    this.distributionBucket = new s3.Bucket(this, "WebsiteBucket", {
+    this.distributionBucket = new s3.Bucket(this, "DistributionBucket", {
       websiteIndexDocument: "index.html",
       publicReadAccess: true,
     });
-    this.distribution = new cloudfront.Distribution(this, "SiteDistribution", {
+
+    this.distribution = new cloudfront.Distribution(this, "Distribution", {
       defaultBehavior: {
         origin: new cloudfront_origins.S3Origin(this.distributionBucket),
       },

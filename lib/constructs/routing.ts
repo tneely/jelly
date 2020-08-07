@@ -9,7 +9,7 @@ export interface RoutingProps {
 }
 
 /**
- * A CloudFormation stack for routing constructs
+ * A Construct to create and manage the application's custom domains
  */
 export class Routing extends cdk.Construct {
   public readonly rootDomain: RootDomain;

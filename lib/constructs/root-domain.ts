@@ -6,7 +6,7 @@ import { Domain, DomainProps } from "./domain";
 export interface RootDomainProps extends DomainProps {}
 
 /**
- * A CloudFormation stack for routing constructs
+ * A Construct to create and host the application's custom root domain
  */
 export class RootDomain extends Domain {
   public readonly certificate: acm.ICertificate;
