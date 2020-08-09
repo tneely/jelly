@@ -18,14 +18,14 @@
   },
   "license": "Apache-2.0",
   "scripts": {
-    "build": "parcel build lambda/auth/index.ts --no-source-maps && tsc -b",
+    "build": "parcel build lambda/auth/index.ts --no-source-maps && tsc -b && yalc push",
     "clean": "tsc -b --clean & yalc remove --all",
     "watch": "tsc -b -w & parcel watch lambda/auth/index.ts --no-source-maps",
     "lint": "eslint '*/**/*.{ts,tsx}'",
     "lint-fix": "eslint '*/**/*.{ts,tsx}' --fix",
     "test": "jest --coverage",
     "tsc": "tsc",
-    "prepare": "npm run build && yalc push",
+    "prepublishOnly": "npm run build",
     "example-install": "cd example && npm ci",
     "example-build": "cd example && npm run build",
     "example-synth": "cd example/packages/infrastructure && npm run synth"
