@@ -57,6 +57,7 @@ The API lambda has full access to both of these resources.
 - Strict return types
 - Documentation
 - Testing
+- Get Parcel to stop generating jelly.d.ts
 
 ### Enhancements
 
@@ -66,7 +67,6 @@ The API lambda has full access to both of these resources.
 - Improve [Observatory score](https://observatory.mozilla.org/analyze/cdk-jelly.com)
 - GitHub actions for releases and such
 - Dashboards, alarms, etc.
-- Precompile lambda instead of relying on NodejsFunction?
 
 ## Troubleshooting
 
@@ -94,14 +94,18 @@ Watches for changes and compile
 
 Performs the jest unit tests
 
-### `install-example`
+### `npm run prepare`
+
+Compiles typescript to js and updates the yalc package
+
+### `example-install`
 
 Installs all packages in the example application
 
-### `build-example`
+### `example-build`
 
 Builds all packages in the example application
 
-### `synth-example`
+### `example-synth`
 
 Synthesizes the infrastructure in the example application

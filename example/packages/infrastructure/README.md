@@ -25,25 +25,9 @@ Follow the pipeline instructions for [bootstrapping][4] and [initial deployment]
 
 In the project directory, you can run:
 
-### `npm run build`
-
-Compiles typescript to js
-
-### `npm run watch`
-
-Watches for changes and compile
-
 ### `npm run test`
 
 Performs the jest unit tests
-
-### `cdk deploy`
-
-Deploys this stack to your default AWS account/region
-
-### `cdk diff`
-
-Compares deployed stack with current state
 
 ### `cdk synth`
 

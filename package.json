@@ -18,17 +18,17 @@
   },
   "license": "Apache-2.0",
   "scripts": {
-    "build": "tsc -b",
-    "clean": "tsc -b --clean",
-    "watch": "tsc -b -w",
+    "build": "parcel build lambda/auth/index.ts --no-source-maps && tsc -b",
+    "clean": "tsc -b --clean & yalc remove --all",
+    "watch": "tsc -b -w & parcel watch lambda/auth/index.ts --no-source-maps",
     "lint": "eslint '*/**/*.{ts,tsx}'",
     "lint-fix": "eslint '*/**/*.{ts,tsx}' --fix",
     "test": "jest --coverage",
-    "npm": "npm",
-    "prepublish": "npm run build",
-    "install-example": "cd example && npm ci && npm run bootstrap",
-    "build-example": "cd example && npm run build",
-    "synth-example": "cd example/packages/infrastructure && npm run synth"
+    "tsc": "tsc",
+    "prepare": "npm run build && yalc push",
+    "example-install": "cd example && npm ci",
+    "example-build": "cd example && npm run build",
+    "example-synth": "cd example/packages/infrastructure && npm run synth"
   },
   "dependencies": {
     "@aws-cdk/aws-apigateway": "^1.57.0",
@@ -50,6 +50,22 @@
     "jsonwebtoken": "^8.5.1",
     "jwk-to-pem": "^2.0.4"
   },
+  "peerDependencies": {
+    "@aws-cdk/aws-apigateway": "^1.57.0",
+    "@aws-cdk/aws-certificatemanager": "^1.57.0",
+    "@aws-cdk/aws-cloudfront": "^1.57.0",
+    "@aws-cdk/aws-cloudfront-origins": "^1.57.0",
+    "@aws-cdk/aws-codedeploy": "^1.57.0",
+    "@aws-cdk/aws-cognito": "^1.57.0",
+    "@aws-cdk/aws-dynamodb": "^1.57.0",
+    "@aws-cdk/aws-iam": "^1.57.0",
+    "@aws-cdk/aws-lambda": "^1.57.0",
+    "@aws-cdk/aws-route53": "^1.57.0",
+    "@aws-cdk/aws-route53-targets": "^1.57.0",
+    "@aws-cdk/aws-s3": "^1.57.0",
+    "@aws-cdk/aws-s3-deployment": "^1.57.0",
+    "@aws-cdk/core": "^1.57.0"
+  },
   "devDependencies": {
     "@types/jest": "^24.0.22",
     "@types/jsonwebtoken": "^8.5.0",
@@ -61,9 +77,25 @@
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-prettier": "^3.1.4",
     "jest": "^24.9.0",
+    "parcel": "^2.0.0-beta.1",
     "prettier": "^2.0.5",
     "ts-jest": "^24.1.0",
     "ts-node": "^8.10.2",
-    "typescript": "^3.9.7"
+    "typescript": "^3.9.7",
+    "yalc": "^1.0.0-pre.41"
+  },
+  "auth-lambda": "dist/lambda/authentication/index.js",
+  "targets": {
+    "main": false,
+    "auth-lambda": {
+      "context": "node",
+      "includeNodeModules": {
+        "aws-sdk": false
+      },
+      "minify": true,
+      "engines": {
+        "node": ">= 12"
+      }
+    }
   }
 }

@@ -2,7 +2,6 @@ import * as cdk from "@aws-cdk/core";
 import * as cognito from "@aws-cdk/aws-cognito";
 import * as routeAlias from "@aws-cdk/aws-route53-targets";
 import * as lambda from "@aws-cdk/aws-lambda";
-import * as nodeLambda from "@aws-cdk/aws-lambda-nodejs";
 import * as codedeploy from "@aws-cdk/aws-codedeploy";
 import * as path from "path";
 import { Routing } from "./routing";
@@ -75,13 +74,14 @@ export class Authentication extends cdk.Construct {
   }
 
   private createAuthHandler(): lambda.Function {
-    const authHandler = new nodeLambda.NodejsFunction(this, "AuthHandler", {
-      entry: path.join(__dirname, "../lambda/authentication/index.js"),
-      projectRoot: path.resolve(__dirname, "../../.."),
-      minify: true,
+    const authHandler = new lambda.Function(this, "AuthHandler", {
+      handler: "index.handler",
+      code: lambda.Code.fromAsset(path.join(__dirname, "../lambda/authentication")),
+      runtime: lambda.Runtime.NODEJS_12_X,
       environment: {
         USER_POOL_URL: this.userPool.userPoolProviderUrl,
         USER_CLIENT_ID: this.userPoolClient.userPoolClientId,
+        AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1",
       },
     });
 
