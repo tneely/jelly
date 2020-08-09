@@ -54,7 +54,6 @@ The API lambda has full access to both of these resources.
 
 ### Housekeeping
 
-- Clean up package dependencies
 - Strict return types
 - Documentation
 - Testing

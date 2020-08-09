@@ -47,8 +47,16 @@ export class Authentication extends cdk.Construct {
       },
     });
 
-    const rootDomainName = props.routing?.rootDomain.name;
-    this.userPoolClient = this.userPool.addClient("UserPoolClient", {
+    this.userPoolClient = this.createAuthClient(props.routing?.rootDomain.name);
+    this.authHandler = this.createAuthHandler();
+
+    if (props.routing) {
+      this.createAuthDomain(props.routing);
+    }
+  }
+
+  private createAuthClient(rootDomainName?: string): cognito.UserPoolClient {
+    const client = this.userPool.addClient("UserPoolClient", {
       oAuth: {
         // TODO: support OAuth flows?
         callbackUrls: rootDomainName
@@ -58,27 +66,16 @@ export class Authentication extends cdk.Construct {
     });
 
     // FIXME: Introduce proper logout url config in the userpool client
-    (this.userPoolClient.node.defaultChild as cognito.CfnUserPoolClient).logoutUrLs = [
+    (client.node.defaultChild as cognito.CfnUserPoolClient).logoutUrLs = [
       `https://${rootDomainName}`,
       `https://${rootDomainName}/`,
     ];
 
-    if (props.routing) {
-      const domain = this.userPool.addDomain("AuthDomain", {
-        customDomain: {
-          domainName: props.routing.authDomain.name,
-          certificate: props.routing.rootDomain.certificate,
-        },
-      });
-      props.routing.authDomain.addAliasTarget(new routeAlias.UserPoolDomainTarget(domain));
-      new cdk.CfnOutput(this, "AuthUrl", {
-        value: domain.signInUrl(this.userPoolClient, {
-          redirectUri: `https://${rootDomainName}/`,
-        }),
-      });
-    }
+    return client;
+  }
 
-    this.authHandler = new nodeLambda.NodejsFunction(this, "AuthHandler", {
+  private createAuthHandler(): lambda.Function {
+    const authHandler = new nodeLambda.NodejsFunction(this, "AuthHandler", {
       entry: path.join(__dirname, "../lambda/authentication/index.js"),
       projectRoot: path.resolve(__dirname, "../../.."),
       minify: true,
@@ -90,12 +87,29 @@ export class Authentication extends cdk.Construct {
 
     const alias = new lambda.Alias(this, "Alias", {
       aliasName: "Prod",
-      version: this.authHandler.currentVersion,
+      version: authHandler.currentVersion,
     });
 
     new codedeploy.LambdaDeploymentGroup(this, "DeploymentGroup", {
       alias,
       deploymentConfig: codedeploy.LambdaDeploymentConfig.LINEAR_10PERCENT_EVERY_1MINUTE,
+    });
+
+    return authHandler;
+  }
+
+  private createAuthDomain(routing: Routing): void {
+    const domain = this.userPool.addDomain("AuthDomain", {
+      customDomain: {
+        domainName: routing.authDomain.name,
+        certificate: routing.rootDomain.certificate,
+      },
+    });
+    routing.authDomain.addAliasTarget(new routeAlias.UserPoolDomainTarget(domain));
+    new cdk.CfnOutput(this, "AuthUrl", {
+      value: domain.signInUrl(this.userPoolClient, {
+        redirectUri: `https://${routing.rootDomain.name}/`,
+      }),
     });
   }
 }

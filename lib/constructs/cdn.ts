@@ -40,23 +40,19 @@ export class Cdn extends cdk.Construct {
     this.distribution = new cloudfront.Distribution(this, "Distribution", {
       defaultBehavior: {
         origin: new cloudfront_origins.S3Origin(this.distributionBucket),
+        viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
       },
       priceClass: cloudfront.PriceClass.PRICE_CLASS_100,
       certificate: props.routing?.rootDomain.certificate,
     });
 
     // FIXME: The new Distribution doesn't allow domain names to be set. These are needed to route properly
-    // We also can't redirect to HTTPS from the existing distribution options
     if (props.routing) {
       const rootDomainName = props.routing.rootDomain.name;
       const cfnDistribution = this.distribution.node.children[1] as any;
       cfnDistribution.distributionConfig = {
         ...cfnDistribution.distributionConfig,
         aliases: [rootDomainName, `www.${rootDomainName}`],
-        defaultCacheBehavior: {
-          ...cfnDistribution.distributionConfig.defaultCacheBehavior,
-          viewerProtocolPolicy: "redirect-to-https",
-        },
       };
     }
     props.routing?.rootDomain.addAliasTarget(new routeAlias.CloudFrontTarget(this.distribution));

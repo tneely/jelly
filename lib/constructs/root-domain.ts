@@ -27,7 +27,7 @@ export class RootDomain extends Domain {
     });
   }
 
-  delegateSubDomain(subdomain: Domain) {
+  delegateSubDomain(subdomain: Domain): route53.ZoneDelegationRecord {
     return new route53.ZoneDelegationRecord(
       this,
       `ZoneDelegationRecord-${subdomain.hostedZone.zoneName}`,

@@ -3,22 +3,37 @@ import * as lambda from "@aws-cdk/aws-lambda";
 import * as s3deploy from "@aws-cdk/aws-s3-deployment";
 
 import { Api, Authentication, Database, Cdn, Routing } from "./constructs";
+import { RoutingProps } from "./constructs/routing";
 
 export interface JellyProps extends cdk.StackProps {
-  app: {
+  /**
+   * Properties related to the web client
+   */
+  client: {
+    /**
+     * The source code to distribute
+     */
     source: s3deploy.ISource;
   };
+
+  /**
+   * Properties related to the API
+   */
   api: {
+    /**
+     * The lambda code to deploy
+     */
     code: lambda.Code;
   };
-  domain?: {
-    name: string;
-    apiSubdomainPrefix?: string;
-    authSubdomainPrefix?: string;
-  };
+
+  /**
+   * Domain routing
+   *
+   * @default - No routing will be done
+   */
+  routing?: RoutingProps;
 }
 
-// TODO: should this be a stack?
 export class Jelly extends cdk.Stack {
   public readonly api: Api;
   public readonly auth: Authentication;
@@ -29,18 +44,18 @@ export class Jelly extends cdk.Stack {
   constructor(scope: cdk.Construct, props: JellyProps) {
     super(scope, "Jelly", props);
 
-    if (props.domain) {
+    if (props.routing) {
       this.routing = new Routing(this, {
-        domainName: props.domain.name,
-        apiSubdomainPrefix: props.domain.apiSubdomainPrefix,
-        authSubdomainPrefix: props.domain.authSubdomainPrefix,
+        domainName: props.routing.domainName,
+        apiSubdomainPrefix: props.routing.apiSubdomainPrefix,
+        authSubdomainPrefix: props.routing.authSubdomainPrefix,
       });
     }
 
     this.database = new Database(this);
 
     this.cdn = new Cdn(this, {
-      source: props.app.source,
+      source: props.client.source,
       routing: this.routing,
     });
 

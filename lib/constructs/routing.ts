@@ -3,8 +3,23 @@ import { RootDomain } from "./root-domain";
 import { Domain } from "./domain";
 
 export interface RoutingProps {
+  /**
+   * The root domain name
+   */
   domainName: string;
+
+  /**
+   * Subdomain prefix to use for the API
+   *
+   * @default "api"
+   */
   apiSubdomainPrefix?: string;
+
+  /**
+   * Subdomain prefix to use for authentication
+   *
+   * @default "auth"
+   */
   authSubdomainPrefix?: string;
 }
 

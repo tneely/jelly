@@ -13,11 +13,11 @@ export class ExampleJellyApp extends cdk.Stage {
       api: {
         code: lambda.Code.fromAsset("../api/dist"),
       },
-      app: {
+      client: {
         source: s3deploy.Source.asset("../app/build"),
       },
-      domain: {
-        name: "cdk-jelly.com",
+      routing: {
+        domainName: "cdk-jelly.com",
       },
     });
   }
