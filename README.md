@@ -94,6 +94,10 @@ Watches for changes and compile
 
 Performs the jest unit tests
 
+### `npm run prepare`
+
+Compiles typescript to js and updates the yalc package
+
 ### `example-install`
 
 Installs all packages in the example application
