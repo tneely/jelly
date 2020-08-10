@@ -30,7 +30,7 @@ class PipelineStack extends cdk.Stack {
       synthAction: pipelines.SimpleSynthAction.standardNpmSynth({
         sourceArtifact,
         cloudAssemblyArtifact,
-        installCommand: "npm ci && npm run example-install",
+        installCommand: "npm ci && npm run build && npm run example-install",
         buildCommand: "npm run example-build",
         synthCommand: "npm run example-synth",
         environment: {
