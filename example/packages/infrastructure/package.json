@@ -6,7 +6,7 @@
   },
   "scripts": {
     "test": "jest",
-    "prepare": "yalc add cdk-jelly",
+    "preinstall": "yalc add cdk-jelly",
     "synth": "cdk synth && mv cdk.out ../../../cdk.out"
   },
   "devDependencies": {
