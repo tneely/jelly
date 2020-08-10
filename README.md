@@ -58,6 +58,7 @@ The API lambda has full access to both of these resources.
 - Documentation
 - Testing
 - Get Parcel to stop generating jelly.d.ts
+- Clean up package scripts - there has to be a cleaner way of doing this
 
 ### Enhancements
 
@@ -66,7 +67,7 @@ The API lambda has full access to both of these resources.
   - Table options
 - Improve [Observatory score](https://observatory.mozilla.org/analyze/cdk-jelly.com)
 - GitHub actions for releases and such
-- Dashboards, alarms, etc.
+- Dashboards, alarms, pipeline tests, etc.
 
 ## Troubleshooting
 
