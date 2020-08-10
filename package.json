@@ -24,9 +24,8 @@
     "lint": "eslint '*/**/*.{ts,tsx}'",
     "lint-fix": "eslint '*/**/*.{ts,tsx}' --fix",
     "test": "jest --coverage",
-    "tsc": "tsc",
     "prepare": "npm run build && yalc push",
-    "example-install": "cd example && npm ci",
+    "example-install": "cd example && npm ci && npm run bootstrap",
     "example-build": "cd example && npm run build",
     "example-synth": "cd example/packages/infrastructure && npm run synth"
   },
