@@ -6,7 +6,10 @@
   },
   "scripts": {
     "test": "jest",
-    "preinstall": "yalc add cdk-jelly",
+    "preinstall": "npm run create-jelly-store && npm run move-jelly-dist && npm run move-jelly-pkg",
+    "create-jelly-store": "mkdir -p .store/cdk-jelly",
+    "move-jelly-dist": "cp -r ../../../dist .store/cdk-jelly",
+    "move-jelly-pkg": "cp ../../../package.json .store/cdk-jelly/package.json",
     "synth": "cdk synth && mv cdk.out ../../../cdk.out"
   },
   "devDependencies": {
@@ -17,8 +20,7 @@
     "jest": "^25.5.0",
     "ts-jest": "^25.3.1",
     "ts-node": "^8.1.0",
-    "typescript": "~3.7.2",
-    "yalc": "^1.0.0-pre.41"
+    "typescript": "~3.7.2"
   },
   "dependencies": {
     "@aws-cdk/aws-apigateway": "^1.57.0",
@@ -40,6 +42,6 @@
     "@aws-cdk/aws-s3-deployment": "^1.57.0",
     "@aws-cdk/core": "^1.57.0",
     "@aws-cdk/pipelines": "^1.57.0",
-    "cdk-jelly": "file:.yalc/cdk-jelly"
+    "cdk-jelly": "file:.store/cdk-jelly"
   }
 }

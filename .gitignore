@@ -6,7 +6,6 @@
 !lib/shapes/*.d.ts
 node_modules
 *.tsbuildinfo
-yalc.lock
 
 # Editors
 .vscode
@@ -22,4 +21,4 @@ build
 .dist
 dist
 .parcel-cache
-.yalc
+.store

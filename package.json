@@ -19,12 +19,12 @@
   "license": "Apache-2.0",
   "scripts": {
     "build": "parcel build lambda/auth/index.ts --no-source-maps && tsc -b",
-    "clean": "tsc -b --clean & yalc remove --all",
+    "clean": "tsc -b --clean",
     "watch": "tsc -b -w & parcel watch lambda/auth/index.ts --no-source-maps",
     "lint": "eslint '*/**/*.{ts,tsx}'",
     "lint-fix": "eslint '*/**/*.{ts,tsx}' --fix",
     "test": "jest --coverage",
-    "prepare": "npm run build && yalc push",
+    "prepare": "npm run build",
     "example-install": "cd example && npm ci && npm run bootstrap",
     "example-build": "cd example && npm run build",
     "example-synth": "cd example/packages/infrastructure && npm run synth"
@@ -80,8 +80,7 @@
     "prettier": "^2.0.5",
     "ts-jest": "^24.1.0",
     "ts-node": "^8.10.2",
-    "typescript": "^3.9.7",
-    "yalc": "^1.0.0-pre.41"
+    "typescript": "^3.9.7"
   },
   "auth-lambda": "dist/lambda/authentication/index.js",
   "targets": {
