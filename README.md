@@ -57,7 +57,6 @@ The API lambda has full access to both of these resources.
 - Strict return types
 - Documentation
 - Testing
-- Get Parcel to stop generating jelly.d.ts
 - Clean up package scripts - there has to be a cleaner way of doing this
 
 ### Enhancements

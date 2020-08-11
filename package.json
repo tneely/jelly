@@ -85,6 +85,7 @@
   "auth-lambda": "dist/lambda/authentication/index.js",
   "targets": {
     "main": false,
+    "types": false,
     "auth-lambda": {
       "context": "node",
       "includeNodeModules": {
