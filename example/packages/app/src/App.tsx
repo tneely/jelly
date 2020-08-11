@@ -74,10 +74,6 @@ const App = () => {
           <MessageBoard loggedIn={!!user} />
         </section>
       </div>
-
-      <footer className="App-footer">
-        Developed by <a href="https://github.com/tneely">Taylor Neely</a>
-      </footer>
     </div>
   );
 };

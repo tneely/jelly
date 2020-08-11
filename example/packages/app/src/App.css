@@ -2,7 +2,7 @@
 
 .App {
   display: grid;
-  grid-template-rows: 30vh auto 40px;
+  grid-template-rows: 30vh auto;
   justify-items: center;
   height: 100vh;
 }
@@ -28,17 +28,4 @@
   background-color: #e0e0e0;
   border-radius: 5px;
   padding: 1rem;
-}
-.App-footer {
-  background-color: var(--bg-color-dark);
-  color: var(--font-color-light);
-  text-align: center;
-  padding: 5px;
-  width: 100%;
-}
-.App-footer a {
-  color: var(--accent-color-light);
-}
-.App-footer a:hover {
-  color: var(--font-color-light);
 }
