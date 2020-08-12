@@ -1,37 +1,35 @@
 import * as cdk from "@aws-cdk/core";
-import * as lambda from "@aws-cdk/aws-lambda";
-import * as s3deploy from "@aws-cdk/aws-s3-deployment";
 
 import { Api, Authentication, Database, Cdn, Routing } from "./constructs";
-import { RoutingProps } from "./constructs/routing";
+import { ApiOptions } from "./constructs/api";
+import { ClientOptions } from "./constructs/cdn";
+import { RoutingOptions } from "./constructs/routing";
+import { DatabaseOptions } from "./constructs/database";
 
 export interface JellyProps extends cdk.StackProps {
   /**
    * Properties related to the web client
    */
-  client: {
-    /**
-     * The source code to distribute
-     */
-    source: s3deploy.ISource;
-  };
+  client: ClientOptions;
 
   /**
    * Properties related to the API
    */
-  api: {
-    /**
-     * The lambda code to deploy
-     */
-    code: lambda.Code;
-  };
+  api: ApiOptions;
+
+  /**
+   * Properties related to the database
+   *
+   * @default - No tables will be created
+   */
+  database?: DatabaseOptions;
 
   /**
    * Domain routing
    *
    * @default - No routing will be done
    */
-  routing?: RoutingProps;
+  routing?: RoutingOptions;
 }
 
 export class Jelly extends cdk.Stack {
@@ -46,16 +44,14 @@ export class Jelly extends cdk.Stack {
 
     if (props.routing) {
       this.routing = new Routing(this, {
-        domainName: props.routing.domainName,
-        apiSubdomainPrefix: props.routing.apiSubdomainPrefix,
-        authSubdomainPrefix: props.routing.authSubdomainPrefix,
+        ...props.routing,
       });
     }
 
-    this.database = new Database(this);
+    this.database = new Database(this, props.database);
 
     this.cdn = new Cdn(this, {
-      source: props.client.source,
+      ...props.client,
       routing: this.routing,
     });
 
@@ -68,8 +64,8 @@ export class Jelly extends cdk.Stack {
     if (this.routing) this.auth.node.addDependency(this.cdn);
 
     this.api = new Api(this, {
-      code: props.api.code,
-      database: this.database.table,
+      ...props.api,
+      database: this.database,
       routing: this.routing,
       authHandler: this.auth.authHandler,
     });

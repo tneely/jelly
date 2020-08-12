@@ -54,16 +54,11 @@ The API lambda has full access to both of these resources.
 
 ### Housekeeping
 
-- Strict return types
-- Documentation
 - Testing
 - Clean up package scripts - there has to be a cleaner way of doing this
 
 ### Enhancements
 
-- Expose customization options
-  - Lambda runtime, env variables
-  - Table options
 - Improve [Observatory score](https://observatory.mozilla.org/analyze/cdk-jelly.com)
 - GitHub actions for releases and such
 - Dashboards, alarms, pipeline tests, etc.

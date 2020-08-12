@@ -1,28 +1,34 @@
 import * as cdk from "@aws-cdk/core";
 import * as dynamodb from "@aws-cdk/aws-dynamodb";
-import { AttributeType } from "@aws-cdk/aws-dynamodb";
 
-export interface DatabaseProps {}
+export interface DatabaseOptions {
+  /**
+   * A list of DynamoDB tables to create, along with their configuration
+   *
+   * @default - No tables are created
+   */
+  tables?: {
+    [key: string]: dynamodb.TableProps;
+  };
+}
+
+export interface DatabaseProps extends DatabaseOptions {}
 
 /**
  * A Construct to create the application's databases
  */
 export class Database extends cdk.Construct {
-  public readonly table: dynamodb.Table;
+  public readonly tables?: Record<string, dynamodb.Table>;
 
-  constructor(scope: cdk.Construct) {
+  constructor(scope: cdk.Construct, props?: DatabaseProps) {
     super(scope, "Database");
 
-    this.table = new dynamodb.Table(this, "Primary", {
-      partitionKey: {
-        name: "id",
-        type: AttributeType.STRING,
-      },
-      sortKey: {
-        name: "created",
-        type: AttributeType.NUMBER,
-      },
-      timeToLiveAttribute: "ttl",
-    });
+    if (props?.tables) {
+      this.tables = Object.keys(props.tables).reduce((tables, tableKey) => {
+        const tableProps = props.tables![tableKey];
+        tables[tableKey] = new dynamodb.Table(this, tableKey, tableProps);
+        return tables;
+      }, {} as Record<string, dynamodb.Table>);
+    }
   }
 }

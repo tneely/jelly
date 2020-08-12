@@ -6,12 +6,14 @@ import * as cloudfront_origins from "@aws-cdk/aws-cloudfront-origins";
 import * as routeAlias from "@aws-cdk/aws-route53-targets";
 import { Routing } from "./routing";
 
-export interface CdnProps {
+export interface ClientOptions {
   /**
    * The source code to distribute
    */
   source: s3deploy.ISource;
+}
 
+export interface CdnProps extends ClientOptions {
   /**
    * Routing to use for custom domains
    *

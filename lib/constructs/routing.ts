@@ -2,7 +2,7 @@ import * as cdk from "@aws-cdk/core";
 import { RootDomain } from "./root-domain";
 import { Domain } from "./domain";
 
-export interface RoutingProps {
+export interface RoutingOptions {
   /**
    * The root domain name
    */
@@ -22,6 +22,8 @@ export interface RoutingProps {
    */
   authSubdomainPrefix?: string;
 }
+
+export interface RoutingProps extends RoutingOptions {}
 
 /**
  * A Construct to create and manage the application's custom domains

@@ -1,6 +1,7 @@
 import * as cdk from "@aws-cdk/core";
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as s3deploy from "@aws-cdk/aws-s3-deployment";
+import { AttributeType } from "@aws-cdk/aws-dynamodb";
 import { Jelly } from "cdk-jelly";
 
 export interface ExampleJellyAppProps extends cdk.StageProps {}
@@ -18,6 +19,21 @@ export class ExampleJellyApp extends cdk.Stage {
       },
       routing: {
         domainName: "cdk-jelly.com",
+      },
+      database: {
+        tables: {
+          DATABASE_NAME: {
+            partitionKey: {
+              name: "id",
+              type: AttributeType.STRING,
+            },
+            sortKey: {
+              name: "created",
+              type: AttributeType.NUMBER,
+            },
+            timeToLiveAttribute: "ttl",
+          },
+        },
       },
     });
   }

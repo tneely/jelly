@@ -1,16 +1,16 @@
 import * as cdk from "@aws-cdk/core";
 import * as lambda from "@aws-cdk/aws-lambda";
-import * as dynamodb from "@aws-cdk/aws-dynamodb";
 import * as apig from "@aws-cdk/aws-apigateway";
 import * as codedeploy from "@aws-cdk/aws-codedeploy";
 import * as routeAlias from "@aws-cdk/aws-route53-targets";
 import { Routing } from "./routing";
+import { Database } from "./database";
 
-export interface ApiProps {
+export interface ApiOptions {
   /**
-   * The database table to be made available to the lambda
+   * The lambda code to deploy
    */
-  database: dynamodb.Table;
+  code: lambda.Code;
 
   /**
    * Name of the lambda handler
@@ -27,9 +27,28 @@ export interface ApiProps {
   handlerRuntime?: lambda.Runtime;
 
   /**
-   * The lambda code to deploy
+   * Key-value pairs that Lambda caches and makes available for your Lambda
+   * functions. Use environment variables to apply configuration changes, such
+   * as test and production environment configurations, without changing your
+   * Lambda function source code.
+   *
+   * By default, Jelly makes the following environment variables available to your Lambda:
+   * - [DATABASE_NAMES]: the database tables corresponding to keys in JellyProps.Database.tables
+   * - AUTH_LAMBDA_ARN: the name of a lambda that can be used to authenticate users
+   * - AWS_NODEJS_CONNECTION_REUSE_ENABLED: enables connection reuse in Node.js functions
+   *
+   * @default - No additional environment variables.
    */
-  code: lambda.Code;
+  environmentVariables?: {
+    [key: string]: string;
+  };
+}
+
+export interface ApiProps extends ApiOptions {
+  /**
+   * The database tables to be made available to the lambda
+   */
+  database: Database;
 
   /**
    * Routing to use for custom domains
@@ -64,12 +83,13 @@ export class Api extends cdk.Construct {
       runtime: handlerRuntime,
       code: props.code,
       environment: {
-        DATABASE_NAME: props.database.tableName,
+        ...props.environmentVariables,
+        ...this.renderDatabaseNames(props.database),
         AUTH_LAMBDA_ARN: props.authHandler.functionArn,
         AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1",
       },
     });
-    props.database.grantFullAccess(this.handler);
+    this.grantDatabaseAccess(this.handler, props.database);
     props.authHandler.grantInvoke(this.handler);
 
     const alias = new lambda.Alias(this, "Alias", {
@@ -93,6 +113,28 @@ export class Api extends cdk.Construct {
         certificate: props.routing.rootDomain.certificate,
       });
       props.routing.apiDomain.addAliasTarget(new routeAlias.ApiGateway(this.restApi));
+    }
+  }
+
+  private renderDatabaseNames(database: Database) {
+    if (database.tables) {
+      const databaseNames = Object.keys(database.tables).reduce((databaseNames, tableKey) => {
+        const table = database.tables![tableKey];
+        databaseNames[tableKey] = table.tableName;
+        return databaseNames;
+      }, {} as Record<string, string>);
+
+      return databaseNames;
+    } else {
+      return {};
+    }
+  }
+
+  private grantDatabaseAccess(handler: lambda.Function, database: Database) {
+    if (database.tables) {
+      Object.keys(database.tables).forEach((tableKey) => {
+        database.tables![tableKey].grantFullAccess(handler);
+      });
     }
   }
 }
