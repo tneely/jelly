@@ -81,10 +81,6 @@ In the project directory, you can run:
 
 Compiles typescript to js
 
-### `npm run watch`
-
-Watches for changes and compile
-
 ### `npm run test`
 
 Performs the jest unit tests

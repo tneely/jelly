@@ -18,9 +18,10 @@
   },
   "license": "Apache-2.0",
   "scripts": {
-    "build": "parcel build lambda/auth/index.ts --no-source-maps && tsc -b",
+    "build": "(npm run build-auth-lambda & npm run build-header-lambda) && tsc -b",
+    "build-auth-lambda": "parcel build lambda/auth/index.ts --no-source-maps --target auth-lambda",
+    "build-header-lambda": "parcel build lambda/header/index.ts --no-source-maps --target header-lambda",
     "clean": "tsc -b --clean",
-    "watch": "tsc -b -w & parcel watch lambda/auth/index.ts --no-source-maps",
     "lint": "eslint '*/**/*.{ts,tsx}'",
     "lint-fix": "eslint '*/**/*.{ts,tsx}' --fix",
     "test": "jest --coverage",

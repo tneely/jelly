@@ -63,9 +63,10 @@ export class Cdn extends cdk.Construct {
 
     this.distribution = new cloudfront.Distribution(this, "Distribution", {
       defaultBehavior: {
+        // FIXME: Set custom origin header "x-env-csp" to props.contentSecurityPolicy ?? "default-src 'self'"
         origin: new cloudfront_origins.S3Origin(this.distributionBucket),
         viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-        edgeLambdas: this.renderEdgeLambdas(props.contentSecurityPolicy),
+        edgeLambdas: this.renderEdgeLambdas(),
       },
       priceClass: cloudfront.PriceClass.PRICE_CLASS_100,
       certificate: props.routing?.rootDomain.certificate,
@@ -75,9 +76,10 @@ export class Cdn extends cdk.Construct {
     // FIXME: The new Distribution doesn't allow domain names to be set. These are needed to route properly
     if (props.routing) {
       const rootDomainName = props.routing.rootDomain.name;
-      const cfnDistribution = this.distribution.node.defaultChild as any;
+      const cfnDistribution = this.distribution.node.defaultChild as cloudfront.CfnDistribution;
+      const distributionConfig = cfnDistribution.distributionConfig as cloudfront.CfnDistribution.DistributionConfigProperty;
       cfnDistribution.distributionConfig = {
-        ...cfnDistribution.distributionConfig,
+        ...distributionConfig,
         aliases: [rootDomainName, `www.${rootDomainName}`],
       };
     }
@@ -90,15 +92,11 @@ export class Cdn extends cdk.Construct {
     });
   }
 
-  private renderEdgeLambdas(contentSecurityPolicy?: string): cloudfront.EdgeLambda[] {
+  private renderEdgeLambdas(): cloudfront.EdgeLambda[] {
     const headerHandler = new lambda.Function(this, "HeaderHandler", {
       handler: "index.handler",
       code: lambda.Code.fromAsset(path.join(__dirname, "../lambda/authentication")),
       runtime: lambda.Runtime.NODEJS_12_X,
-      environment: {
-        AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1",
-        CONTENT_SECURITY_POLICY: contentSecurityPolicy ?? "default-src 'self'",
-      },
     });
 
     return [

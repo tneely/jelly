@@ -1,7 +1,8 @@
-import { CloudFrontResponseHandler, CloudFrontHeaders } from "aws-lambda";
+import { CloudFrontResponseHandler, CloudFrontHeaders, CloudFrontRequest } from "aws-lambda";
 
 // Code modified from https://iangilham.com/2017/08/22/add-headers-with-lambda-edge.html
 export const handler: CloudFrontResponseHandler = async (event, _context) => {
+  const request = event.Records[0].cf.request;
   const response = event.Records[0].cf.response;
   const headers = response.headers;
 
@@ -20,7 +21,7 @@ export const handler: CloudFrontResponseHandler = async (event, _context) => {
   addHeader(headers, "Feature-Policy", "microphone 'self'; geolocation 'self'; camera 'self'");
 
   // Add custom content security policy
-  addHeader(headers, "Content-Security-Policy", process.env.CONTENT_SECURITY_POLICY);
+  addHeader(headers, "Content-Security-Policy", getContentSecurityPolicy(request));
 
   return response;
 };
@@ -32,4 +33,8 @@ const addHeader = (headers: CloudFrontHeaders, key: string, value: string): void
       value,
     },
   ];
+};
+
+const getContentSecurityPolicy = (request: CloudFrontRequest) => {
+  return request.origin?.custom?.customHeaders["x-env-csp"][0]?.value;
 };
