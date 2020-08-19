@@ -3,14 +3,36 @@ import * as s3 from "@aws-cdk/aws-s3";
 import * as s3deploy from "@aws-cdk/aws-s3-deployment";
 import * as cloudfront from "@aws-cdk/aws-cloudfront";
 import * as cloudfront_origins from "@aws-cdk/aws-cloudfront-origins";
+import * as lambda from "@aws-cdk/aws-lambda";
 import * as routeAlias from "@aws-cdk/aws-route53-targets";
+import * as path from "path";
 import { Routing } from "./routing";
+import { ErrorResponse } from "@aws-cdk/aws-cloudfront";
 
 export interface ClientOptions {
   /**
    * The source code to distribute
    */
   source: s3deploy.ISource;
+  /**
+   * Content Security Policy to use for the website
+   *
+   * Jelly uses Lambda@Edge to add the security headers.
+   * These are largely follow best practices, and cannot be changed,
+   * but it is highly recommended to customize the CSP,
+   * or else you're going to have a hard time.
+   *
+   * @default "default-src 'self'"
+   */
+  contentSecurityPolicy?: string;
+  /**
+   * Whether to serve the website as a SPA
+   *
+   * If true, 404 error responses will return "/index.html" and a 200 response code
+   *
+   * @default true
+   */
+  isSPA?: boolean;
 }
 
 export interface CdnProps extends ClientOptions {
@@ -43,15 +65,17 @@ export class Cdn extends cdk.Construct {
       defaultBehavior: {
         origin: new cloudfront_origins.S3Origin(this.distributionBucket),
         viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+        edgeLambdas: this.renderEdgeLambdas(props.contentSecurityPolicy),
       },
       priceClass: cloudfront.PriceClass.PRICE_CLASS_100,
       certificate: props.routing?.rootDomain.certificate,
+      errorResponses: this.renderResponseBehavior(props.isSPA),
     });
 
     // FIXME: The new Distribution doesn't allow domain names to be set. These are needed to route properly
     if (props.routing) {
       const rootDomainName = props.routing.rootDomain.name;
-      const cfnDistribution = this.distribution.node.children[1] as any;
+      const cfnDistribution = this.distribution.node.defaultChild as any;
       cfnDistribution.distributionConfig = {
         ...cfnDistribution.distributionConfig,
         aliases: [rootDomainName, `www.${rootDomainName}`],
@@ -64,5 +88,38 @@ export class Cdn extends cdk.Construct {
       destinationBucket: this.distributionBucket,
       distribution: this.distribution,
     });
+  }
+
+  private renderEdgeLambdas(contentSecurityPolicy?: string): cloudfront.EdgeLambda[] {
+    const headerHandler = new lambda.Function(this, "HeaderHandler", {
+      handler: "index.handler",
+      code: lambda.Code.fromAsset(path.join(__dirname, "../lambda/authentication")),
+      runtime: lambda.Runtime.NODEJS_12_X,
+      environment: {
+        AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1",
+        CONTENT_SECURITY_POLICY: contentSecurityPolicy ?? "default-src 'self'",
+      },
+    });
+
+    return [
+      {
+        functionVersion: headerHandler.currentVersion,
+        eventType: cloudfront.LambdaEdgeEventType.ORIGIN_RESPONSE,
+      },
+    ];
+  }
+
+  private renderResponseBehavior(isSPA?: boolean): ErrorResponse[] {
+    if (isSPA === false) {
+      return [];
+    }
+
+    return [
+      {
+        httpStatus: 404,
+        responseHttpStatus: 200,
+        responsePagePath: "/index.html",
+      },
+    ];
   }
 }

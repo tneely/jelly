@@ -116,7 +116,7 @@ export class Api extends cdk.Construct {
     }
   }
 
-  private renderDatabaseNames(database: Database) {
+  private renderDatabaseNames(database: Database): Record<string, string> {
     if (database.tables) {
       const databaseNames = Object.keys(database.tables).reduce((databaseNames, tableKey) => {
         const table = database.tables![tableKey];
@@ -130,7 +130,7 @@ export class Api extends cdk.Construct {
     }
   }
 
-  private grantDatabaseAccess(handler: lambda.Function, database: Database) {
+  private grantDatabaseAccess(handler: lambda.Function, database: Database): void {
     if (database.tables) {
       Object.keys(database.tables).forEach((tableKey) => {
         database.tables![tableKey].grantFullAccess(handler);

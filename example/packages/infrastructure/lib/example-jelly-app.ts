@@ -16,6 +16,8 @@ export class ExampleJellyApp extends cdk.Stage {
       },
       client: {
         source: s3deploy.Source.asset("../app/build"),
+        contentSecurityPolicy:
+          "default-src 'self'; img-src *; font-src fonts.gstatic.com; style-src 'self' fonts.googleapis.com",
       },
       routing: {
         domainName: "cdk-jelly.com",

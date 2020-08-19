@@ -72,6 +72,7 @@
     "@types/node": "^12.12.54",
     "@typescript-eslint/eslint-plugin": "^2.34.0",
     "@typescript-eslint/parser": "^2.34.0",
+    "@types/aws-lambda": "^8.10.61",
     "eslint": "^7.7.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-prettier": "^3.1.4",
@@ -83,10 +84,21 @@
     "typescript": "^3.9.7"
   },
   "auth-lambda": "dist/lambda/authentication/index.js",
+  "header-lambda": "dist/lambda/header/index.js",
   "targets": {
     "main": false,
     "types": false,
     "auth-lambda": {
+      "context": "node",
+      "includeNodeModules": {
+        "aws-sdk": false
+      },
+      "minify": true,
+      "engines": {
+        "node": ">= 12"
+      }
+    },
+    "header-lambda": {
       "context": "node",
       "includeNodeModules": {
         "aws-sdk": false

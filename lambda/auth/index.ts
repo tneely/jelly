@@ -73,7 +73,7 @@ export const handler = async (request: VerificationRequest): Promise<Verificatio
   };
 };
 
-const verifyAndGetSections = (token: string) => {
+const verifyAndGetSections = (token: string): string[] => {
   const tokenSections = token.split(".");
   if (tokenSections.length < 2) {
     throw new Error("Token is invalid");
@@ -81,7 +81,7 @@ const verifyAndGetSections = (token: string) => {
   return tokenSections;
 };
 
-const verifyTokenAndGetPayload = async (token: string) => {
+const verifyTokenAndGetPayload = async (token: string): Promise<Payload> => {
   const tokenSections = verifyAndGetSections(token);
   const headerJSON = Buffer.from(tokenSections[0], "base64").toString("utf8");
   const header = JSON.parse(headerJSON) as TokenHeader;
@@ -109,7 +109,7 @@ const getPublicKeys = async (): Promise<MapOfKidToPublicKey> => {
   }
 };
 
-const verifyAudience = (payload: Payload) => {
+const verifyAudience = (payload: Payload): void => {
   if (payload.aud != cognitoClientId) {
     throw new Error("Token audience mismatch");
   }
