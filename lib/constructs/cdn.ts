@@ -5,6 +5,7 @@ import * as cloudfront from "@aws-cdk/aws-cloudfront";
 import * as cloudfront_origins from "@aws-cdk/aws-cloudfront-origins";
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as routeAlias from "@aws-cdk/aws-route53-targets";
+import * as iam from "@aws-cdk/aws-iam";
 import * as path from "path";
 import { Routing } from "./routing";
 import { ErrorResponse } from "@aws-cdk/aws-cloudfront";
@@ -73,15 +74,20 @@ export class Cdn extends cdk.Construct {
       errorResponses: this.renderResponseBehavior(props.isSPA),
     });
 
+    const cfnDistribution = this.distribution.node.defaultChild as cloudfront.CfnDistribution;
+    // cfnDistribution.addPropertyOverride("CfnDistribution.OriginProperty.OriginCustomHeaders", [
+    //   {
+    //     headerName: "x-env-csp",
+    //     headerValue: props.contentSecurityPolicy ?? "default-src 'self'",
+    //   },
+    // ]);
     // FIXME: The new Distribution doesn't allow domain names to be set. These are needed to route properly
     if (props.routing) {
       const rootDomainName = props.routing.rootDomain.name;
-      const cfnDistribution = this.distribution.node.defaultChild as cloudfront.CfnDistribution;
-      const distributionConfig = cfnDistribution.distributionConfig as cloudfront.CfnDistribution.DistributionConfigProperty;
-      cfnDistribution.distributionConfig = {
-        ...distributionConfig,
-        aliases: [rootDomainName, `www.${rootDomainName}`],
-      };
+      cfnDistribution.addPropertyOverride("DistributionConfig.Aliases", [
+        rootDomainName,
+        `www.${rootDomainName}`,
+      ]);
     }
     props.routing?.rootDomain.addAliasTarget(new routeAlias.CloudFrontTarget(this.distribution));
 
@@ -97,6 +103,15 @@ export class Cdn extends cdk.Construct {
       handler: "index.handler",
       code: lambda.Code.fromAsset(path.join(__dirname, "../lambda/authentication")),
       runtime: lambda.Runtime.NODEJS_12_X,
+      role: new iam.Role(this, "EdgeRole", {
+        assumedBy: new iam.CompositePrincipal(
+          new iam.ServicePrincipal("edgelambda.amazonaws.com"),
+          new iam.ServicePrincipal("lambda.amazonaws.com")
+        ),
+        managedPolicies: [
+          iam.ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole"),
+        ],
+      }),
     });
 
     return [
