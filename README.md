@@ -71,6 +71,10 @@ The API lambda has full access to both of these resources.
 - Improve [Observatory score](https://observatory.mozilla.org/analyze/cdk-jelly.com)
 - GitHub actions for releases and such
 - Dashboards, alarms, pipeline tests, etc.
+- Lerna -> Rush
+  - https://www.npmjs.com/package/@rushstack/eslint-config
+  - https://rushstack.io/pages/heft_tutorials/getting_started/
+  - https://rushjs.io/
 
 ## Troubleshooting
 

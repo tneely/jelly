@@ -85,9 +85,12 @@ export class Authentication extends cdk.Construct {
       },
     });
 
+    // TODO: Keep using authHandler.currentVersion once I figure out why we got the following error
+    // `A version for this Lambda function exists ( 1 ). Modify the function to create a new version.`
+    const version = authHandler.addVersion(new Date().toISOString());
     const alias = new lambda.Alias(this, "Alias", {
       aliasName: "Prod",
-      version: authHandler.currentVersion,
+      version: version,
     });
 
     new codedeploy.LambdaDeploymentGroup(this, "DeploymentGroup", {
