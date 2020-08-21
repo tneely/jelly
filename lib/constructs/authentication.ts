@@ -75,6 +75,9 @@ export class Authentication extends cdk.Construct {
 
   private createAuthHandler(): lambda.Function {
     const authHandler = new lambda.Function(this, "AuthHandler", {
+      // TODO: Remove dynamic description once I figure out why we got the following error
+      // `A version for this Lambda function exists ( 1 ). Modify the function to create a new version.`
+      description: `Generated on: ${new Date().toISOString()}`,
       handler: "index.handler",
       code: lambda.Code.fromAsset(path.join(__dirname, "../lambda/authentication")),
       runtime: lambda.Runtime.NODEJS_12_X,
@@ -85,12 +88,9 @@ export class Authentication extends cdk.Construct {
       },
     });
 
-    // TODO: Keep using authHandler.currentVersion once I figure out why we got the following error
-    // `A version for this Lambda function exists ( 1 ). Modify the function to create a new version.`
-    const version = authHandler.addVersion(new Date().toISOString());
     const alias = new lambda.Alias(this, "Alias", {
       aliasName: "Prod",
-      version: version,
+      version: authHandler.currentVersion,
     });
 
     new codedeploy.LambdaDeploymentGroup(this, "DeploymentGroup", {
