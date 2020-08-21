@@ -92,17 +92,17 @@ const renderCode = (headerOptions: HttpHeaderOptions): string => {
         const response = event.Records[0].cf.response;
         const headers = response.headers;
         // Enforce HSTS
-        addHeader(headers, "Strict-Transport-Security", ${strictTransportSecurity});
+        addHeader(headers, "Strict-Transport-Security", "${strictTransportSecurity}");
         // Reduce XSS risks
-        addHeader(headers, "X-Content-Type-Options", ${xContentTypeOptions});
-        addHeader(headers, "X-XSS-Protection", ${xXssProtection});
-        addHeader(headers, "X-Frame-Options", ${xFrameOptions});
+        addHeader(headers, "X-Content-Type-Options", "${xContentTypeOptions}");
+        addHeader(headers, "X-XSS-Protection", "${xXssProtection}");
+        addHeader(headers, "X-Frame-Options", "${xFrameOptions});
         // Reduce referrer information
-        addHeader(headers, "Referrer-Policy", ${referrerPolicy});
+        addHeader(headers, "Referrer-Policy", "${referrerPolicy}");
         // Limit some feature use to same origin
-        addHeader(headers, "Feature-Policy", ${featurePolicy});
+        addHeader(headers, "Feature-Policy", "${featurePolicy}");
         // Add custom content security policy
-        addHeader(headers, "Content-Security-Policy", ${contentSecurityPolicy});
+        addHeader(headers, "Content-Security-Policy", "${contentSecurityPolicy}");
         return response;
     };
     `;

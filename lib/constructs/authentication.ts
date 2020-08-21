@@ -88,11 +88,7 @@ export class Authentication extends cdk.Construct {
       },
     });
 
-    const alias = new lambda.Alias(this, "Alias", {
-      aliasName: "Prod",
-      version: authHandler.currentVersion,
-    });
-
+    const alias = authHandler.currentVersion.addAlias("Prod");
     new codedeploy.LambdaDeploymentGroup(this, "DeploymentGroup", {
       alias,
       deploymentConfig: codedeploy.LambdaDeploymentConfig.LINEAR_10PERCENT_EVERY_1MINUTE,
