@@ -62,7 +62,7 @@ export interface ApiProps extends ApiOptions {
   /**
    * Lambda responsible for authenticating Cognito user JWTs
    */
-  authHandler: lambda.Function;
+  // authHandler: lambda.Function;
 }
 
 /**
@@ -85,12 +85,12 @@ export class Api extends cdk.Construct {
       environment: {
         ...props.environmentVariables,
         ...this.renderDatabaseNames(props.database),
-        AUTH_LAMBDA_ARN: props.authHandler.functionArn,
+        // AUTH_LAMBDA_ARN: props.authHandler.functionArn,
         AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1",
       },
     });
     this.grantDatabaseAccess(this.handler, props.database);
-    props.authHandler.grantInvoke(this.handler);
+    // props.authHandler.grantInvoke(this.handler);
 
     const alias = new lambda.Alias(this, "Alias", {
       aliasName: "Prod",
