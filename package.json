@@ -18,9 +18,8 @@
   },
   "license": "Apache-2.0",
   "scripts": {
-    "build": "(npm run build-auth-lambda & npm run build-header-lambda) && tsc -b",
+    "build": "npm run build-auth-lambda && tsc -b",
     "build-auth-lambda": "parcel build lambda/auth/index.ts --no-source-maps --target auth-lambda",
-    "build-header-lambda": "parcel build lambda/header/index.ts --no-source-maps --target header-lambda",
     "clean": "tsc -b --clean",
     "lint": "eslint '*/**/*.{ts,tsx}'",
     "lint-fix": "eslint '*/**/*.{ts,tsx}' --fix",
@@ -31,21 +30,21 @@
     "example-synth": "cd example/packages/infrastructure && npm run synth"
   },
   "dependencies": {
-    "@aws-cdk/aws-apigateway": "^1.59.0",
-    "@aws-cdk/aws-certificatemanager": "^1.59.0",
-    "@aws-cdk/aws-cloudfront": "^1.59.0",
-    "@aws-cdk/aws-cloudfront-origins": "^1.59.0",
-    "@aws-cdk/aws-codedeploy": "^1.59.0",
-    "@aws-cdk/aws-cognito": "^1.59.0",
-    "@aws-cdk/aws-dynamodb": "^1.59.0",
-    "@aws-cdk/aws-iam": "^1.59.0",
-    "@aws-cdk/aws-lambda": "^1.59.0",
-    "@aws-cdk/aws-lambda-nodejs": "^1.59.0",
-    "@aws-cdk/aws-route53": "^1.59.0",
-    "@aws-cdk/aws-route53-targets": "^1.59.0",
-    "@aws-cdk/aws-s3": "^1.59.0",
-    "@aws-cdk/aws-s3-deployment": "^1.59.0",
-    "@aws-cdk/core": "^1.59.0",
+    "@aws-cdk/aws-apigateway": "^1.60.0",
+    "@aws-cdk/aws-certificatemanager": "^1.60.0",
+    "@aws-cdk/aws-cloudfront": "^1.60.0",
+    "@aws-cdk/aws-cloudfront-origins": "^1.60.0",
+    "@aws-cdk/aws-codedeploy": "^1.60.0",
+    "@aws-cdk/aws-cognito": "^1.60.0",
+    "@aws-cdk/aws-dynamodb": "^1.60.0",
+    "@aws-cdk/aws-iam": "^1.60.0",
+    "@aws-cdk/aws-lambda": "^1.60.0",
+    "@aws-cdk/aws-lambda-nodejs": "^1.60.0",
+    "@aws-cdk/aws-route53": "^1.60.0",
+    "@aws-cdk/aws-route53-targets": "^1.60.0",
+    "@aws-cdk/aws-s3": "^1.60.0",
+    "@aws-cdk/aws-s3-deployment": "^1.60.0",
+    "@aws-cdk/core": "^1.60.0",
     "axios": "^0.19.2",
     "jsonwebtoken": "^8.5.1",
     "jwk-to-pem": "^2.0.4"
@@ -67,39 +66,28 @@
     "@aws-cdk/core": "^1.57.0"
   },
   "devDependencies": {
+    "@types/aws-lambda": "^8.10.61",
     "@types/jest": "^24.0.22",
     "@types/jsonwebtoken": "^8.5.0",
     "@types/jwk-to-pem": "^2.0.0",
     "@types/node": "^12.12.54",
     "@typescript-eslint/eslint-plugin": "^2.34.0",
     "@typescript-eslint/parser": "^2.34.0",
-    "@types/aws-lambda": "^8.10.61",
     "eslint": "^7.7.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-prettier": "^3.1.4",
     "jest": "^24.9.0",
-    "parcel": "^2.0.0-nightly.366",
+    "parcel": "^2.0.0-nightly.376",
     "prettier": "^2.0.5",
     "ts-jest": "^24.1.0",
     "ts-node": "^8.10.2",
     "typescript": "^3.9.7"
   },
   "auth-lambda": "dist/lambda/authentication/index.js",
-  "header-lambda": "dist/lambda/header/index.js",
   "targets": {
     "main": false,
     "types": false,
     "auth-lambda": {
-      "context": "node",
-      "includeNodeModules": {
-        "aws-sdk": false
-      },
-      "minify": true,
-      "engines": {
-        "node": ">= 12"
-      }
-    },
-    "header-lambda": {
       "context": "node",
       "includeNodeModules": {
         "aws-sdk": false

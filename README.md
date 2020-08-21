@@ -1,4 +1,13 @@
-# Jelly
+```
+       _      _ _
+      | |    | | |
+      | | ___| | |_   _
+  _   | |/ _ \ | | | | |
+ | |__| |  __/ | | |_| |
+  \____/ \___|_|_|\__, |
+                   __/ |
+                  |___/
+```
 
 Jelly is a high level CDK construct that defines everything you'll need to deploy a JAMstack application.
 
