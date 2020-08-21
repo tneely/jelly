@@ -11,22 +11,21 @@ export interface EdgeFunctionProps extends Omit<lambda.FunctionProps, "environme
 }
 
 export class EdgeFunction extends lambda.Function implements cloudfront.EdgeLambda {
-  public readonly edgeRole: iam.Role;
   public readonly functionVersion: lambda.IVersion;
   public readonly eventType: cloudfront.LambdaEdgeEventType;
 
   constructor(scope: cdk.Construct, id: string, props: EdgeFunctionProps) {
     super(scope, id, props);
 
-    this.edgeRole = new iam.Role(this, "EdgeRole", {
-      assumedBy: new iam.CompositePrincipal(
-        new iam.ServicePrincipal("lambda.amazonaws.com"),
-        new iam.ServicePrincipal("edgelambda.amazonaws.com")
-      ),
-      managedPolicies: [
-        iam.ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole"),
-      ],
-    });
+    this.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ["sts:AssumeRole"],
+        principals: [
+          new iam.ServicePrincipal("lambda.amazonaws.com"),
+          new iam.ServicePrincipal("edgelambda.amazonaws.com"),
+        ],
+      })
+    );
 
     this.functionVersion = this.currentVersion;
     this.eventType = props.eventType;

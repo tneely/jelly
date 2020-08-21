@@ -6,7 +6,7 @@ import * as cloudfront_origins from "@aws-cdk/aws-cloudfront-origins";
 import * as routeAlias from "@aws-cdk/aws-route53-targets";
 import { Routing } from "./routing";
 import { ErrorResponse } from "@aws-cdk/aws-cloudfront";
-import { HttpHeaderOptions } from "./http-headers";
+import { HttpHeaderOptions, HttpHeaders } from "./http-headers";
 
 export interface ClientOptions {
   /**
@@ -64,7 +64,7 @@ export class Cdn extends cdk.Construct {
       defaultBehavior: {
         origin: new cloudfront_origins.S3Origin(this.distributionBucket),
         viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-        // edgeLambdas: this.renderEdgeLambdas(),
+        edgeLambdas: this.renderEdgeLambdas(),
       },
       priceClass: cloudfront.PriceClass.PRICE_CLASS_100,
       certificate: props.routing?.rootDomain.certificate,
@@ -86,9 +86,9 @@ export class Cdn extends cdk.Construct {
     return rootDomainName ? [rootDomainName, `www.${rootDomainName}`] : [];
   }
 
-  // private renderEdgeLambdas(httpHeaders?: HttpHeaderOptions): cloudfront.EdgeLambda[] {
-  //   return [new HttpHeaders(this, "HttpHeaders", { ...httpHeaders })];
-  // }
+  private renderEdgeLambdas(httpHeaders?: HttpHeaderOptions): cloudfront.EdgeLambda[] {
+    return [new HttpHeaders(this, "HttpHeaders", { ...httpHeaders })];
+  }
 
   private renderResponseBehavior(isSPA: boolean): ErrorResponse[] {
     return isSPA
