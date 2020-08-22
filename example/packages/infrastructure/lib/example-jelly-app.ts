@@ -18,7 +18,7 @@ export class ExampleJellyApp extends cdk.Stage {
         source: s3deploy.Source.asset("../app/build"),
         httpHeaders: {
           contentSecurityPolicy:
-            "default-src 'self' *.cdk-jelly.com; object-src 'none'; require-trusted-types-for 'script'; img-src *; font-src fonts.gstatic.com; style-src 'self' fonts.googleapis.com; connect-src https:",
+            "default-src 'self' *.cdk-jelly.com; object-src 'none'; require-trusted-types-for 'script'; img-src *; font-src fonts.gstatic.com; style-src 'self' 'unsafe-inline' fonts.googleapis.com; connect-src https:",
         },
       },
       routing: {
