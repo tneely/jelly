@@ -1,9 +1,9 @@
 import * as cdk from "@aws-cdk/core";
 import * as cognito from "@aws-cdk/aws-cognito";
 import * as routeAlias from "@aws-cdk/aws-route53-targets";
-// import * as lambda from "@aws-cdk/aws-lambda";
-// import * as codedeploy from "@aws-cdk/aws-codedeploy";
-// import * as path from "path";
+import * as lambda from "@aws-cdk/aws-lambda";
+import * as codedeploy from "@aws-cdk/aws-codedeploy";
+import * as path from "path";
 import { Routing } from "./routing";
 
 export interface AuthenticationProps {
@@ -23,7 +23,7 @@ export interface AuthenticationProps {
 export class Authentication extends cdk.Construct {
   public readonly userPool: cognito.UserPool;
   public readonly userPoolClient: cognito.UserPoolClient;
-  // public readonly authHandler: lambda.Function;
+  public readonly authHandler: lambda.Function;
 
   constructor(scope: cdk.Construct, props: AuthenticationProps) {
     super(scope, "Authentication");
@@ -47,7 +47,7 @@ export class Authentication extends cdk.Construct {
     });
 
     this.userPoolClient = this.createAuthClient(props.routing?.rootDomain.name);
-    // this.authHandler = this.createAuthHandler();
+    this.authHandler = this.createAuthHandler();
 
     if (props.routing) {
       this.createAuthDomain(props.routing);
@@ -73,26 +73,26 @@ export class Authentication extends cdk.Construct {
     return client;
   }
 
-  // private createAuthHandler(): lambda.Function {
-  //   const authHandler = new lambda.Function(this, "AuthHandler", {
-  //     handler: "index.handler",
-  //     code: lambda.Code.fromAsset(path.join(__dirname, "../lambda/authentication")),
-  //     runtime: lambda.Runtime.NODEJS_12_X,
-  //     environment: {
-  //       USER_POOL_URL: this.userPool.userPoolProviderUrl,
-  //       USER_CLIENT_ID: this.userPoolClient.userPoolClientId,
-  //       AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1",
-  //     },
-  //   });
+  private createAuthHandler(): lambda.Function {
+    const authHandler = new lambda.Function(this, "AuthHandler", {
+      handler: "index.handler",
+      code: lambda.Code.fromAsset(path.join(__dirname, "../lambda/authentication")),
+      runtime: lambda.Runtime.NODEJS_12_X,
+      environment: {
+        USER_POOL_URL: this.userPool.userPoolProviderUrl,
+        USER_CLIENT_ID: this.userPoolClient.userPoolClientId,
+        AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1",
+      },
+    });
 
-  //   const alias = authHandler.currentVersion.addAlias("Prod");
-  //   new codedeploy.LambdaDeploymentGroup(this, "DeploymentGroup", {
-  //     alias,
-  //     deploymentConfig: codedeploy.LambdaDeploymentConfig.LINEAR_10PERCENT_EVERY_1MINUTE,
-  //   });
+    const alias = authHandler.currentVersion.addAlias("Prod");
+    new codedeploy.LambdaDeploymentGroup(this, "DeploymentGroup", {
+      alias,
+      deploymentConfig: codedeploy.LambdaDeploymentConfig.LINEAR_10PERCENT_EVERY_1MINUTE,
+    });
 
-  //   return authHandler;
-  // }
+    return authHandler;
+  }
 
   private createAuthDomain(routing: Routing): void {
     const domain = this.userPool.addDomain("AuthDomain", {
