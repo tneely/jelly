@@ -64,7 +64,7 @@ export class Cdn extends cdk.Construct {
       defaultBehavior: {
         origin: new cloudfront_origins.S3Origin(this.distributionBucket),
         viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-        edgeLambdas: this.renderEdgeLambdas(),
+        edgeLambdas: this.renderEdgeLambdas(props.httpHeaders),
       },
       priceClass: cloudfront.PriceClass.PRICE_CLASS_100,
       certificate: props.routing?.rootDomain.certificate,

@@ -64,11 +64,11 @@ The API lambda has full access to both of these resources.
 ### Housekeeping
 
 - Testing
-- Clean up package scripts - there has to be a cleaner way of doing this
+- Update READMEs
+- Website favicon, react references
 
 ### Enhancements
 
-- Improve [Observatory score](https://observatory.mozilla.org/analyze/cdk-jelly.com)
 - GitHub actions for releases and such
 - Dashboards, alarms, pipeline tests, etc.
 - Lerna -> Rush
@@ -78,13 +78,7 @@ The API lambda has full access to both of these resources.
 
 ## Troubleshooting
 
-### Auth Lambda
-
-The authentication lambda uses [NodejsFunction][4] to package its code.
-For whatever reason, this module requires Docker. If running locally, you'll need to install Docker.
-If running from CodeBuild, you'll need to run with elevated privileges (otherwise Docker access is blocked). If this becomes a large enough barrier, we can just write our own bundling code.
-
-[4]: https://docs.aws.amazon.com/cdk/api/latest/docs/aws-lambda-nodejs-readme.html
+Well this isn't helpful.
 
 ## Available Scripts
 
