@@ -69,7 +69,7 @@ export class Cdn extends cdk.Construct {
       priceClass: cloudfront.PriceClass.PRICE_CLASS_100,
       certificate: props.routing?.rootDomain.certificate,
       domainNames: this.renderDomainNames(props.routing),
-      errorResponses: this.renderResponseBehavior(props.isSPA ?? true),
+      errorResponses: this.renderResponseBehavior(props.isSPA),
     });
 
     props.routing?.rootDomain.addAliasTarget(new routeAlias.CloudFrontTarget(this.distribution));
@@ -90,8 +90,8 @@ export class Cdn extends cdk.Construct {
     return [new HttpHeaders(this, "HttpHeaders", { ...httpHeaders })];
   }
 
-  private renderResponseBehavior(isSPA: boolean): ErrorResponse[] {
-    return isSPA
+  private renderResponseBehavior(isSPA?: boolean): ErrorResponse[] {
+    return isSPA ?? true
       ? [
           {
             httpStatus: 404,

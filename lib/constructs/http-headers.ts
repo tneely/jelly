@@ -96,7 +96,7 @@ const renderCode = (headerOptions: HttpHeaderOptions): string => {
         // Reduce XSS risks
         addHeader(headers, "X-Content-Type-Options", "${xContentTypeOptions}");
         addHeader(headers, "X-XSS-Protection", "${xXssProtection}");
-        addHeader(headers, "X-Frame-Options", "${xFrameOptions});
+        addHeader(headers, "X-Frame-Options", "${xFrameOptions}");
         // Reduce referrer information
         addHeader(headers, "Referrer-Policy", "${referrerPolicy}");
         // Limit some feature use to same origin
