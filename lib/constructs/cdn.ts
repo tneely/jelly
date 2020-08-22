@@ -3,7 +3,7 @@ import * as s3 from "@aws-cdk/aws-s3";
 import * as s3deploy from "@aws-cdk/aws-s3-deployment";
 import * as cloudfront from "@aws-cdk/aws-cloudfront";
 import * as cloudfront_origins from "@aws-cdk/aws-cloudfront-origins";
-import * as routeAlias from "@aws-cdk/aws-route53-targets";
+// import * as routeAlias from "@aws-cdk/aws-route53-targets";
 import { Routing } from "./routing";
 import { ErrorResponse } from "@aws-cdk/aws-cloudfront";
 import { HttpHeaderOptions, HttpHeaders } from "./http-headers";
@@ -72,7 +72,7 @@ export class Cdn extends cdk.Construct {
       errorResponses: this.renderResponseBehavior(props.isSPA),
     });
 
-    props.routing?.rootDomain.addAliasTarget(new routeAlias.CloudFrontTarget(this.distribution));
+    // props.routing?.rootDomain.addAliasTarget(new routeAlias.CloudFrontTarget(this.distribution));
 
     new s3deploy.BucketDeployment(this, "DeployWithInvalidation", {
       sources: [props.source],
