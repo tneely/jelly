@@ -67,7 +67,7 @@ export class Cdn extends cdk.Construct {
         edgeLambdas: this.renderEdgeLambdas(props.httpHeaders),
       },
       priceClass: cloudfront.PriceClass.PRICE_CLASS_100,
-      certificate: props.routing?.rootDomain.certificate,
+      certificate: props.routing?.certificate,
       domainNames: this.renderDomainNames(props.routing),
       errorResponses: this.renderResponseBehavior(props.isSPA),
     });
@@ -83,7 +83,7 @@ export class Cdn extends cdk.Construct {
 
   private renderDomainNames(routing?: Routing): string[] {
     const rootDomainName = routing?.rootDomain.name;
-    return rootDomainName ? [rootDomainName, `www.${rootDomainName}`] : [];
+    return rootDomainName ? [rootDomainName] : [];
   }
 
   private renderEdgeLambdas(httpHeaders?: HttpHeaderOptions): cloudfront.EdgeLambda[] {

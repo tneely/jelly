@@ -23,7 +23,7 @@ export class ExampleJellyApp extends cdk.Stage {
         },
       },
       routing: {
-        domainName: "cdk-jelly.com",
+        baseDomainName: "cdk-jelly.com",
       },
       database: {
         tables: {
