@@ -98,7 +98,7 @@ export class Authentication extends cdk.Construct {
     const domain = this.userPool.addDomain("AuthDomain", {
       customDomain: {
         domainName: routing.authDomain.name,
-        certificate: routing.certificate,
+        certificate: routing.rootDomain.certificate,
       },
     });
     routing.authDomain.addAliasTarget(new routeAlias.UserPoolDomainTarget(domain));

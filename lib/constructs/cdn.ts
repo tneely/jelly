@@ -67,7 +67,7 @@ export class Cdn extends cdk.Construct {
         edgeLambdas: this.renderEdgeLambdas(props.httpHeaders),
       },
       priceClass: cloudfront.PriceClass.PRICE_CLASS_100,
-      certificate: props.routing?.certificate,
+      certificate: props.routing?.rootDomain.certificate,
       domainNames: this.renderDomainNames(props.routing),
       errorResponses: this.renderResponseBehavior(props.isSPA),
     });
