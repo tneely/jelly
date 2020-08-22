@@ -71,12 +71,12 @@ const renderCode = (headerOptions: HttpHeaderOptions): string => {
   const strictTransportSecurity =
     headerOptions.strictTransportSecurity ?? "max-age=63072000; includeSubDomains; preload";
   const xContentTypeOptions = headerOptions.xContentTypeOptions ?? "nosniff";
-  const xXssProtection = headerOptions.xContentTypeOptions ?? "1; mode=block";
-  const xFrameOptions = headerOptions.xContentTypeOptions ?? "DENY";
-  const referrerPolicy = headerOptions.xContentTypeOptions ?? "strict-origin-when-cross-origin";
+  const xXssProtection = headerOptions.xXssProtection ?? "1; mode=block";
+  const xFrameOptions = headerOptions.xFrameOptions ?? "DENY";
+  const referrerPolicy = headerOptions.referrerPolicy ?? "strict-origin-when-cross-origin";
   const featurePolicy =
-    headerOptions.xContentTypeOptions ?? "microphone 'self'; geolocation 'self'; camera 'self'";
-  const contentSecurityPolicy = headerOptions.xContentTypeOptions ?? "default-src 'self'";
+    headerOptions.featurePolicy ?? "microphone 'self'; geolocation 'self'; camera 'self'";
+  const contentSecurityPolicy = headerOptions.contentSecurityPolicy ?? "default-src 'self'";
 
   return `const addHeader = (headers, key, value) => {
         headers[key.toLowerCase()] = [
@@ -87,7 +87,7 @@ const renderCode = (headerOptions: HttpHeaderOptions): string => {
         ];
     };
     
-    export const handler = async (event, _context) => {
+    exports.handler = async (event, _context) => {
         const request = event.Records[0].cf.request;
         const response = event.Records[0].cf.response;
         const headers = response.headers;
