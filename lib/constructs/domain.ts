@@ -27,6 +27,7 @@ export class Domain extends cdk.Construct {
   addAliasTarget(aliasTarget: route53.IAliasRecordTarget): route53.ARecord {
     return new route53.ARecord(this, "AliasRecord", {
       zone: this.hostedZone,
+      recordName: this.name,
       target: route53.RecordTarget.fromAlias(aliasTarget),
     });
   }

@@ -1,7 +1,7 @@
 import * as cdk from "@aws-cdk/core";
 import * as acm from "@aws-cdk/aws-certificatemanager";
 import * as route53 from "@aws-cdk/aws-route53";
-// import * as route53patterns from "@aws-cdk/aws-route53-patterns";
+import * as route53patterns from "@aws-cdk/aws-route53-patterns";
 import { Domain } from "./domain";
 
 export interface RootDomainProps {
@@ -26,12 +26,12 @@ export class RootDomain extends Domain {
       validation: acm.CertificateValidation.fromDns(this.hostedZone),
     });
 
-    // new route53patterns.HttpsRedirect(this, "WwwRedirect", {
-    //   targetDomain: this.name,
-    //   zone: this.hostedZone,
-    //   certificate: this.certificate,
-    //   recordNames: [props.baseDomainName],
-    // });
+    new route53patterns.HttpsRedirect(this, "WwwRedirect", {
+      targetDomain: this.name,
+      zone: this.hostedZone,
+      certificate: this.certificate,
+      recordNames: [props.baseDomainName],
+    });
   }
 
   delegateSubDomain(subdomain: Domain) {
