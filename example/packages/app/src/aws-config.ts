@@ -36,8 +36,8 @@ export default {
     oauth: {
       domain: "auth.cdk-jelly.com",
       scope: ["phone", "email", "profile", "openid", "aws.cognito.signin.user.admin"],
-      redirectSignIn: "https://cdk-jelly.com/",
-      redirectSignOut: "https://cdk-jelly.com/",
+      redirectSignIn: "https://www.cdk-jelly.com/",
+      redirectSignOut: "https://www.cdk-jelly.com/",
       responseType: "code", // or 'token', note that REFRESH token will only be generated when the responseType is code
     },
   },

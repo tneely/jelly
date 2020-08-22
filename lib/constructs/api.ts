@@ -110,7 +110,7 @@ export class Api extends cdk.Construct {
     if (props.routing) {
       this.restApi.addDomainName("CustomDomain", {
         domainName: props.routing.apiDomain.name,
-        certificate: props.routing.rootDomain.certificate,
+        certificate: props.routing.certificate,
       });
       props.routing.apiDomain.addAliasTarget(new routeAlias.ApiGateway(this.restApi));
     }
