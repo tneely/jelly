@@ -1,6 +1,7 @@
 import * as cdk from "@aws-cdk/core";
 import * as acm from "@aws-cdk/aws-certificatemanager";
 import * as route53 from "@aws-cdk/aws-route53";
+import * as route53patterns from "@aws-cdk/aws-route53-patterns";
 import { Domain, DomainProps } from "./domain";
 
 export interface RootDomainProps extends DomainProps {}
@@ -20,10 +21,10 @@ export class RootDomain extends Domain {
       validation: acm.CertificateValidation.fromDns(this.hostedZone),
     });
 
-    new route53.CnameRecord(this, "WwwAlias", {
+    new route53patterns.HttpsRedirect(this, "WwwRedirect", {
+      targetDomain: this.name,
       zone: this.hostedZone,
-      recordName: `www.${props.domainName}`,
-      domainName: props.domainName,
+      certificate: this.certificate,
     });
   }
 

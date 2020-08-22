@@ -52,6 +52,13 @@ export interface HttpHeaderOptions {
    * @default "default-src 'self'"
    */
   contentSecurityPolicy?: string;
+
+  /**
+   * placeholder
+   *
+   * @default "*"
+   */
+  accessControlAllowOrigin?: string;
 }
 
 export interface HttpHeadersProps extends HttpHeaderOptions {}
@@ -77,6 +84,7 @@ const renderCode = (headerOptions: HttpHeaderOptions): string => {
   const featurePolicy =
     headerOptions.featurePolicy ?? "microphone 'self'; geolocation 'self'; camera 'self'";
   const contentSecurityPolicy = headerOptions.contentSecurityPolicy ?? "default-src 'self'";
+  const accessControlAllowOrigin = headerOptions.accessControlAllowOrigin ?? "*";
 
   return `const addHeader = (headers, key, value) => {
         headers[key.toLowerCase()] = [
@@ -103,6 +111,8 @@ const renderCode = (headerOptions: HttpHeaderOptions): string => {
         addHeader(headers, "Feature-Policy", "${featurePolicy}");
         // Add custom content security policy
         addHeader(headers, "Content-Security-Policy", "${contentSecurityPolicy}");
+        // Access control
+        addHeader(headers, "Access-Control-Allow-Origin", "${accessControlAllowOrigin}");
         return response;
     };
     `;
