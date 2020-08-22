@@ -75,6 +75,7 @@ export class Authentication extends cdk.Construct {
 
   private createAuthHandler(): lambda.Function {
     const authHandler = new lambda.Function(this, "AuthHandler", {
+      description: `Workaround to current version bug: ${new Date().toISOString()}`,
       handler: "index.handler",
       code: lambda.Code.fromAsset(path.join(__dirname, "../lambda/authentication")),
       runtime: lambda.Runtime.NODEJS_12_X,
