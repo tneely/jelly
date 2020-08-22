@@ -8,9 +8,9 @@ export default {
     // Required only if it's different from Amazon Cognito Region
     // identityPoolRegion: "XX-XXXX-X",
     // OPTIONAL - Amazon Cognito User Pool ID
-    userPoolId: "us-east-1_zMsXNY0Dr",
+    userPoolId: "us-east-1_042y1q53G",
     // OPTIONAL - Amazon Cognito Web Client ID (26-char alphanumeric string)
-    userPoolWebClientId: "12nruj6d5j2eq88471nsb1cr39",
+    userPoolWebClientId: "29oue3og38a58oovni31141rm",
     // OPTIONAL - Enforce user authentication prior to accessing AWS resources or not
     // mandatorySignIn: false,
     // OPTIONAL - Configuration for cookie storage
