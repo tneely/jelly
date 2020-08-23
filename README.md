@@ -65,7 +65,6 @@ The API lambda has full access to both of these resources.
 
 - Testing
 - Update READMEs
-- Website favicon, react references
 
 ### Enhancements
 
