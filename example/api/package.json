@@ -2,7 +2,7 @@
   "name": "example-api",
   "version": "1.0.0",
   "description": "API for the example Jelly application",
-  "main": "dist/index.js",
+  "main": "./dist/index.js",
   "scripts": {
     "build": "heft test --clean",
     "clean": "heft clean"

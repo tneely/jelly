@@ -2,9 +2,7 @@
   "name": "example-app",
   "version": "1.0.0",
   "private": true,
-  "files": [
-    "build"
-  ],
+  "main": "./build/index.html",
   "dependencies": {
     "@aws-amplify/ui-react": "^0.2.15",
     "@fortawesome/fontawesome-svg-core": "^1.2.30",

@@ -6,7 +6,8 @@
   },
   "scripts": {
     "test": "jest --coverage",
-    "build": "cdk synth"
+    "build": "cdk synth",
+    "clean": "rm -r cdk.out"
   },
   "devDependencies": {
     "@rushstack/eslint-config": "^1.2.0",
@@ -40,6 +41,8 @@
     "@aws-cdk/aws-s3-deployment": "^1.60.0",
     "@aws-cdk/core": "^1.60.0",
     "@aws-cdk/pipelines": "^1.60.0",
-    "cdk-jelly": "workspace:*"
+    "cdk-jelly": "workspace:*",
+    "example-api": "workspace:*",
+    "example-app": "workspace:*"
   }
 }

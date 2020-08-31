@@ -3,6 +3,7 @@ import * as lambda from "@aws-cdk/aws-lambda";
 import * as s3deploy from "@aws-cdk/aws-s3-deployment";
 import { AttributeType } from "@aws-cdk/aws-dynamodb";
 import { Jelly } from "cdk-jelly";
+import { dirname } from "path";
 
 export interface ExampleJellyAppProps extends cdk.StageProps {}
 
@@ -12,10 +13,10 @@ export class ExampleJellyApp extends cdk.Stage {
 
     new Jelly(this, {
       api: {
-        code: lambda.Code.fromAsset("../api/dist"),
+        code: lambda.Code.fromAsset(dirname(require.resolve("example-api"))),
       },
       client: {
-        source: s3deploy.Source.asset("../app/build"),
+        source: s3deploy.Source.asset(dirname(require.resolve("example-app"))),
         httpHeaders: {
           contentSecurityPolicy:
             "default-src 'self' *.cdk-jelly.com; object-src 'none'; require-trusted-types-for 'script'; img-src *; font-src fonts.gstatic.com; style-src 'self' 'unsafe-inline' fonts.googleapis.com; connect-src https:",
