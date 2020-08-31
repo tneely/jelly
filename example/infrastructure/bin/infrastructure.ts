@@ -30,8 +30,7 @@ class PipelineStack extends cdk.Stack {
       synthAction: pipelines.SimpleSynthAction.standardNpmSynth({
         sourceArtifact,
         cloudAssemblyArtifact,
-        installCommand: "npm install -g @microsoft/rush",
-        buildCommand: "rush install",
+        installCommand: "npm install -g @microsoft/rush && rush install",
         synthCommand: "rush rebuild && mv example/infrastructure/cdk.out ./cdk.out",
         environment: {
           buildImage: codebuild.LinuxBuildImage.STANDARD_4_0,
