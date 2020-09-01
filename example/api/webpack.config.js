@@ -14,6 +14,5 @@ module.exports = {
   },
   externals: {
     "aws-sdk": "commonjs aws-sdk",
-    "aws-lambda": "commonjs aws-lambda",
   },
 };
