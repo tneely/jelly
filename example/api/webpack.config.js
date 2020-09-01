@@ -1,8 +1,6 @@
-const path = require("path");
-
 module.exports = {
   mode: "production",
-  target: "async-node",
+  target: "node",
   resolve: {
     // Note: Do not specify '.ts' or '.tsx' here.
     // Webpack runs as a postprocess after the compiler.
@@ -10,6 +8,7 @@ module.exports = {
   },
   entry: "./temp/index.js",
   output: {
+    libraryTarget: "commonjs",
     filename: "index.js",
   },
   externals: {

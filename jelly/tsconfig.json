@@ -21,7 +21,8 @@
     "resolveJsonModule": true,
     "composite": true,
     "incremental": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node"
   },
   "include": ["lib/**/*.ts"]
 }

@@ -2,7 +2,7 @@ const path = require("path");
 
 module.exports = {
   mode: "production",
-  target: "async-node",
+  target: "node",
   resolve: {
     // Note: Do not specify '.ts' or '.tsx' here.
     // Webpack runs as a postprocess after the compiler.
@@ -12,6 +12,7 @@ module.exports = {
     auth: "./dist/lambda/auth/index.js",
   },
   output: {
+    libraryTarget: "commonjs",
     filename: "[name]/index.js",
     path: path.resolve(__dirname, "dist/lambda"),
   },
