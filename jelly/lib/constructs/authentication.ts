@@ -74,7 +74,7 @@ export class Authentication extends cdk.Construct {
   }
 
   private createAuthHandler(): lambda.Function {
-    const authHandler = new lambda.Function(this, "AuthHandler", {
+    const authHandler = new lambda.Function(this, "DELETE_ME", {
       description: `Workaround to current version bug: ${new Date().toISOString()}`,
       handler: "index.handler",
       code: lambda.Code.fromAsset(path.join(__dirname, "../lambda/auth")),
