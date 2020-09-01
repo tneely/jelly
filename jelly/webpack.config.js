@@ -1,5 +1,4 @@
 const path = require("path");
-const webpack = require("webpack");
 
 module.exports = {
   mode: "production",
@@ -16,5 +15,7 @@ module.exports = {
     filename: "[name]/index.js",
     path: path.resolve(__dirname, "dist/lambda"),
   },
-  plugins: [new webpack.IgnorePlugin(/aws-sdk/), new webpack.IgnorePlugin(/aws-lambda/)],
+  externals: {
+    "aws-sdk": "aws-sdk",
+  },
 };
