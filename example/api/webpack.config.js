@@ -13,7 +13,7 @@ module.exports = {
     filename: "index.js",
   },
   externals: {
-    "aws-sdk": "aws-sdk",
-    "aws-lambda": "aws-lambda",
+    "aws-sdk": "commonjs aws-sdk",
+    "aws-lambda": "commonjs aws-lambda",
   },
 };

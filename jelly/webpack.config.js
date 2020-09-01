@@ -16,6 +16,6 @@ module.exports = {
     path: path.resolve(__dirname, "dist/lambda"),
   },
   externals: {
-    "aws-sdk": "aws-sdk",
+    "aws-sdk": "commonjs aws-sdk",
   },
 };
