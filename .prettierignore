@@ -1,7 +1,6 @@
 #-------------------------------------------------------------------------------------------------------------------
 # Keep this section in sync with .gitignore
 #-------------------------------------------------------------------------------------------------------------------
-
 # Logs
 *.log
 npm-debug.log*
@@ -68,6 +67,17 @@ common/temp/
 common/autoinstallers/*/.npmrc
 **/.rush/temp/
 
+# Parcel
+.parcel-cache
+
+# Build
+**/cdk.out/
+**/build/
+**/dist/
+**/temp/
+**/build-cache/
+tsconfig.tsbuildinfo
+
 #-------------------------------------------------------------------------------------------------------------------
 # Prettier-specific overrides
 #-------------------------------------------------------------------------------------------------------------------
@@ -86,7 +96,6 @@ shrinkwrap.json
 
 # Build outputs
 dist
-lib
 
 # Prettier reformats code blocks inside Markdown, which affects rendered output
 *.md
