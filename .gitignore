@@ -73,3 +73,4 @@ common/autoinstallers/*/.npmrc
 **/dist/
 **/temp/
 **/build-cache/
+tsconfig.tsbuildinfo
