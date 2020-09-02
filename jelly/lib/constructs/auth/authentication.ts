@@ -2,8 +2,7 @@ import * as cdk from "@aws-cdk/core";
 import * as cognito from "@aws-cdk/aws-cognito";
 import * as routeAlias from "@aws-cdk/aws-route53-targets";
 import * as lambda from "@aws-cdk/aws-lambda";
-import * as codedeploy from "@aws-cdk/aws-codedeploy";
-import * as path from "path";
+import { AuthFunction } from "./auth-function";
 import { Routing } from "../routing";
 
 export interface AuthenticationProps {
@@ -47,7 +46,10 @@ export class Authentication extends cdk.Construct {
     });
 
     this.userPoolClient = this.createAuthClient(props.routing?.rootDomain.name);
-    this.authHandler = this.createAuthHandler();
+    this.authHandler = new AuthFunction(this, "AuthHandler", {
+      userPoolProviderUrl: this.userPool.userPoolProviderUrl,
+      userPoolClientId: this.userPoolClient.userPoolClientId,
+    });
 
     if (props.routing) {
       this.createAuthDomain(props.routing);
@@ -71,28 +73,6 @@ export class Authentication extends cdk.Construct {
     ];
 
     return client;
-  }
-
-  private createAuthHandler(): lambda.Function {
-    const authHandler = new lambda.Function(this, "AuthHandler", {
-      description: `Workaround to current version bug: ${new Date().toISOString()}`,
-      handler: "index.handler",
-      code: lambda.Code.fromAsset(path.join(__dirname, "../lambda/auth")),
-      runtime: lambda.Runtime.NODEJS_12_X,
-      environment: {
-        USER_POOL_URL: this.userPool.userPoolProviderUrl,
-        USER_CLIENT_ID: this.userPoolClient.userPoolClientId,
-        AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1",
-      },
-    });
-
-    const alias = authHandler.currentVersion.addAlias("Prod");
-    new codedeploy.LambdaDeploymentGroup(this, "DeploymentGroup", {
-      alias,
-      deploymentConfig: codedeploy.LambdaDeploymentConfig.LINEAR_10PERCENT_EVERY_1MINUTE,
-    });
-
-    return authHandler;
   }
 
   private createAuthDomain(routing: Routing): void {
