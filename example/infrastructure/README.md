@@ -20,15 +20,3 @@ Follow the pipeline instructions for [bootstrapping][4] and [initial deployment]
 [3]: https://aws.amazon.com/secrets-manager/
 [4]: https://docs.aws.amazon.com/cdk/api/latest/docs/pipelines-readme.html#cdk-environment-bootstrapping
 [5]: https://docs.aws.amazon.com/cdk/api/latest/docs/pipelines-readme.html#initial-pipeline-deployment
-
-## Available Scripts
-
-In the project directory, you can run:
-
-### `npm run test`
-
-Performs the jest unit tests
-
-### `cdk synth`
-
-Emits the synthesized CloudFormation template

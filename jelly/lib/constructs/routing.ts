@@ -9,18 +9,18 @@ export interface RoutingOptions {
   baseDomainName: string;
 
   /**
-   * Subdomain prefix to use for the API (e.g. "api" for api.example.com)
+   * Subdomain to use for the API (e.g. "api" for api.example.com)
    *
    * @default "api"
    */
-  apiSubdomainPrefix?: string;
+  apiSubdomain?: string;
 
   /**
-   * Subdomain prefix to use for authentication (e.g. "auth" for auth.example.com)
+   * Subdomain to use for authentication (e.g. "auth" for auth.example.com)
    *
    * @default "auth"
    */
-  authSubdomainPrefix?: string;
+  authSubdomain?: string;
 }
 
 export interface RoutingProps extends RoutingOptions {}
@@ -36,8 +36,8 @@ export class Routing extends cdk.Construct {
   constructor(scope: cdk.Construct, props: RoutingProps) {
     super(scope, "Routing");
 
-    const apiSubDomainPrefix = props.apiSubdomainPrefix ?? "api";
-    const authSubDomainPrefix = props.authSubdomainPrefix ?? "auth";
+    const apiSubDomainPrefix = props.apiSubdomain ?? "api";
+    const authSubDomainPrefix = props.authSubdomain ?? "auth";
 
     this.rootDomain = new RootDomain(this, { baseDomainName: props.baseDomainName });
     this.apiDomain = new Domain(this, "ApiDomain", {
