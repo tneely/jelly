@@ -1,8 +1,8 @@
 import * as cdk from "@aws-cdk/core";
 
 import { Api, Authentication, Database, Cdn, Routing } from "./constructs";
-import { ApiOptions } from "./constructs/api";
-import { ClientOptions } from "./constructs/cdn";
+import { ApiOptions } from "./constructs/api/api";
+import { ClientOptions } from "./constructs/client";
 import { RoutingOptions } from "./constructs/routing";
 import { DatabaseOptions } from "./constructs/database";
 

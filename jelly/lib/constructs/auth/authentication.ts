@@ -4,7 +4,7 @@ import * as routeAlias from "@aws-cdk/aws-route53-targets";
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as codedeploy from "@aws-cdk/aws-codedeploy";
 import * as path from "path";
-import { Routing } from "./routing";
+import { Routing } from "../routing";
 
 export interface AuthenticationProps {
   /**

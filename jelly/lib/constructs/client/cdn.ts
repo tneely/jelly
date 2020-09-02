@@ -4,7 +4,7 @@ import * as s3deploy from "@aws-cdk/aws-s3-deployment";
 import * as cloudfront from "@aws-cdk/aws-cloudfront";
 import * as cloudfront_origins from "@aws-cdk/aws-cloudfront-origins";
 import * as routeAlias from "@aws-cdk/aws-route53-targets";
-import { Routing } from "./routing";
+import { Routing } from "../routing";
 import { ErrorResponse } from "@aws-cdk/aws-cloudfront";
 import { HttpHeaderOptions, HttpHeaders } from "./http-headers";
 

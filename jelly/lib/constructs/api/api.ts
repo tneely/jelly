@@ -3,8 +3,8 @@ import * as lambda from "@aws-cdk/aws-lambda";
 import * as apig from "@aws-cdk/aws-apigateway";
 import * as codedeploy from "@aws-cdk/aws-codedeploy";
 import * as routeAlias from "@aws-cdk/aws-route53-targets";
-import { Routing } from "./routing";
-import { Database } from "./database";
+import { Routing } from "../routing";
+import { Database } from "../database";
 
 export interface ApiOptions {
   /**
