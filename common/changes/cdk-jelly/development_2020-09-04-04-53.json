@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "cdk-jelly",
+      "comment": "User authentication resources are now optional",
+      "type": "minor"
+    }
+  ],
+  "packageName": "cdk-jelly",
+  "email": "tneely417@gmail.com"
+}
