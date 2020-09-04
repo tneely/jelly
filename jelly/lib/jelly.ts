@@ -30,13 +30,20 @@ export interface JellyProps extends cdk.StackProps {
    * @default - No routing will be done
    */
   routing?: RoutingOptions;
+
+  /**
+   * Whether Cognito-based user authentication will be set up
+   *
+   * @default true
+   */
+  withUserAuthentication?: boolean;
 }
 
 export class Jelly extends cdk.Stack {
   public readonly api: Api;
-  public readonly auth: Authentication;
   public readonly database: Database;
   public readonly cdn: Cdn;
+  public readonly auth?: Authentication;
   public readonly routing?: Routing;
 
   constructor(scope: cdk.Construct, props: JellyProps) {
@@ -55,19 +62,21 @@ export class Jelly extends cdk.Stack {
       routing: this.routing,
     });
 
-    this.auth = new Authentication(this, {
-      routing: this.routing,
-    });
+    if (props.withUserAuthentication ?? true) {
+      this.auth = new Authentication(this, {
+        routing: this.routing,
+      });
 
-    // Dependency needed so that alias exists on root domain before auth domain created
-    // (userPool.addDomain throws a fit otherwise during initial CFn deployment)
-    if (this.routing) this.auth.node.addDependency(this.cdn);
+      // Dependency needed so that alias exists on root domain before auth domain created
+      // (userPool.addDomain throws a fit otherwise during initial CFn deployment)
+      if (this.routing) this.auth.node.addDependency(this.cdn);
+    }
 
     this.api = new Api(this, {
       ...props.api,
       database: this.database,
       routing: this.routing,
-      authHandler: this.auth.authHandler,
+      authHandler: this.auth?.authHandler,
     });
   }
 }

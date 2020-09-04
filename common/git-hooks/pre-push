@@ -1,0 +1,7 @@
+#!/bin/sh
+# Called by "git push" with no arguments.  The hook should
+# exit with non-zero status after issuing an appropriate message if
+# it wants to stop the push.
+
+# Invoke the "rush build" custom command to verify changes can build before they are pushed. 
+node common/scripts/install-run-rush.js build || exit $?
