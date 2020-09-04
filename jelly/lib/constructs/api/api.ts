@@ -62,7 +62,7 @@ export interface ApiProps extends ApiOptions {
   /**
    * Lambda responsible for authenticating Cognito user JWTs
    */
-  authHandler: lambda.Function;
+  authHandler?: lambda.Function;
 }
 
 /**
@@ -84,13 +84,13 @@ export class Api extends cdk.Construct {
       code: props.code,
       environment: {
         ...props.environmentVariables,
-        ...this.renderDatabaseNames(props.database),
-        AUTH_LAMBDA_ARN: props.authHandler.functionArn,
+        ...this.renderDatabaseVariables(props.database),
+        ...this.renderAuthVariables(props.authHandler),
         AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1",
       },
     });
     this.grantDatabaseAccess(this.handler, props.database);
-    props.authHandler.grantInvoke(this.handler);
+    props.authHandler?.grantInvoke(this.handler);
 
     const alias = new lambda.Alias(this, "Alias", {
       aliasName: "Prod",
@@ -116,7 +116,7 @@ export class Api extends cdk.Construct {
     }
   }
 
-  private renderDatabaseNames(database: Database): Record<string, string> {
+  private renderDatabaseVariables(database: Database): Record<string, string> {
     if (database.tables) {
       const databaseNames = Object.keys(database.tables).reduce((databaseNames, tableKey) => {
         const table = database.tables![tableKey];
@@ -128,6 +128,10 @@ export class Api extends cdk.Construct {
     } else {
       return {};
     }
+  }
+
+  private renderAuthVariables(authHandler?: lambda.Function): Record<string, string> {
+    return authHandler ? { AUTH_LAMBDA_ARN: authHandler.functionArn } : {};
   }
 
   private grantDatabaseAccess(handler: lambda.Function, database: Database): void {

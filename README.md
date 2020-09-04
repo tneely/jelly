@@ -93,6 +93,13 @@ baseEnvironmentVariables = {
 
 ### Authentication
 
+```typescript
+new Jelly(this, {
+  // ...
+  withUserAuthentication: true // optional, this is default
+});
+```
+
 Jelly uses Cognito for user authentication, creating both a user pool and user pool client. You will need to make use of both of these resource IDs in order to authenticate users using tools like Amplify.
 
 We provide an authentication handler that is available to your API through the `AUTH_LAMBDA_ARN` environment variable. You can pass this lambda the Cognito authentication token to verify whether it is valid.
