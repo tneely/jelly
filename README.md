@@ -53,6 +53,8 @@ npm install -g @microsoft/rush
 
 `rush update` - Installs all dependencies for the monorepo
 
+`rush update-cdk` - Upgrades all CDK packages to the latest version
+
 `rush rebuild` - Does a full, clean build of every project
 (run `rush build` to build only the projects that have changed)
 
