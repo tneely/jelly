@@ -18,16 +18,5 @@
     "aws-sdk": "^2.746.0",
     "eslint": "^7.8.1",
     "typescript": "^4.0.2"
-  },
-  "targets": {
-    "main": {
-      "context": "node",
-      "engines": {
-        "node": ">= 10.13.0"
-      },
-      "includeNodeModules": {
-        "aws-sdk": false
-      }
-    }
   }
 }
