@@ -1,6 +1,13 @@
 # Change Log - cdk-jelly
 
-This log was last generated on Sun, 06 Sep 2020 23:54:10 GMT and should not be manually modified.
+This log was last generated on Tue, 15 Sep 2020 04:06:50 GMT and should not be manually modified.
+
+## 1.3.0
+Tue, 15 Sep 2020 04:06:50 GMT
+
+### Minor changes
+
+- Update CDK version to 1.63
 
 ## 1.2.0
 Sun, 06 Sep 2020 23:54:10 GMT
