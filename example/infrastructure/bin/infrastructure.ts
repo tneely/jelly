@@ -26,11 +26,12 @@ class PipelineStack extends cdk.Stack {
         repo: "jelly",
       }),
 
-      synthAction: pipelines.SimpleSynthAction.standardNpmSynth({
+      synthAction: new pipelines.SimpleSynthAction({
         sourceArtifact,
         cloudAssemblyArtifact,
-        installCommand: "npm install -g @microsoft/rush && rush install",
-        synthCommand: "rush rebuild && mv example/infrastructure/cdk.out ./cdk.out",
+        installCommands: ["npm install -g @microsoft/rush", "rush install"],
+        buildCommands: ["rush build"],
+        synthCommand: "mv example/infrastructure/cdk.out ./cdk.out",
         environment: {
           buildImage: codebuild.LinuxBuildImage.STANDARD_4_0,
           privileged: true,
