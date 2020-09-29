@@ -65,6 +65,7 @@ importers:
   ../../example/infrastructure:
     dependencies:
       '@aws-cdk/aws-apigateway': 1.64.1
+      '@aws-cdk/aws-appsync': 1.64.1
       '@aws-cdk/aws-certificatemanager': 1.64.1
       '@aws-cdk/aws-cloudfront': 1.64.1
       '@aws-cdk/aws-cloudfront-origins': 1.64.1
@@ -76,7 +77,6 @@ importers:
       '@aws-cdk/aws-dynamodb': 1.64.1
       '@aws-cdk/aws-iam': 1.64.1
       '@aws-cdk/aws-lambda': 1.64.1
-      '@aws-cdk/aws-lambda-nodejs': 1.64.1
       '@aws-cdk/aws-route53': 1.64.1
       '@aws-cdk/aws-route53-patterns': 1.64.1
       '@aws-cdk/aws-route53-targets': 1.64.1
@@ -100,6 +100,7 @@ importers:
       typescript: 4.0.2
     specifiers:
       '@aws-cdk/aws-apigateway': ^1.64.1
+      '@aws-cdk/aws-appsync': ^1.64.1
       '@aws-cdk/aws-certificatemanager': ^1.64.1
       '@aws-cdk/aws-cloudfront': ^1.64.1
       '@aws-cdk/aws-cloudfront-origins': ^1.64.1
@@ -111,7 +112,6 @@ importers:
       '@aws-cdk/aws-dynamodb': ^1.64.1
       '@aws-cdk/aws-iam': ^1.64.1
       '@aws-cdk/aws-lambda': ^1.64.1
-      '@aws-cdk/aws-lambda-nodejs': ^1.64.1
       '@aws-cdk/aws-route53': ^1.64.1
       '@aws-cdk/aws-route53-patterns': ^1.64.1
       '@aws-cdk/aws-route53-targets': ^1.64.1
@@ -135,6 +135,7 @@ importers:
   ../../jelly:
     devDependencies:
       '@aws-cdk/aws-apigateway': 1.64.1
+      '@aws-cdk/aws-appsync': 1.64.1
       '@aws-cdk/aws-certificatemanager': 1.64.1
       '@aws-cdk/aws-cloudfront': 1.64.1
       '@aws-cdk/aws-cloudfront-origins': 1.64.1
@@ -165,6 +166,7 @@ importers:
       typescript: 4.0.2
     specifiers:
       '@aws-cdk/aws-apigateway': ^1.64.1
+      '@aws-cdk/aws-appsync': ^1.64.1
       '@aws-cdk/aws-certificatemanager': ^1.64.1
       '@aws-cdk/aws-cloudfront': ^1.64.1
       '@aws-cdk/aws-cloudfront-origins': ^1.64.1
@@ -399,6 +401,19 @@ packages:
       node: '>= 10.13.0 <13 || >=13.7.0'
     resolution:
       integrity: sha512-tLT1lJlyhfSf2IG+xunZJ/baj87eoEo25XCxekiWVRZdaq9o3/jszHn0Ltg30bV6spyzyx+uTwajM+pS9GTshw==
+  /@aws-cdk/aws-appsync/1.64.1:
+    dependencies:
+      '@aws-cdk/aws-cognito': 1.64.1
+      '@aws-cdk/aws-dynamodb': 1.64.1
+      '@aws-cdk/aws-iam': 1.64.1
+      '@aws-cdk/aws-lambda': 1.64.1
+      '@aws-cdk/aws-s3-assets': 1.64.1
+      '@aws-cdk/core': 1.64.1
+      constructs: 3.0.4
+    engines:
+      node: '>= 10.13.0 <13 || >=13.7.0'
+    resolution:
+      integrity: sha512-inQCtOb2nHI2aOGfwLT9oqlqc3lWMgplDU/B/NQgemNa9C2quLSeav0iWW3P58QXXIq9B4TBplo3tvvb963jtA==
   /@aws-cdk/aws-autoscaling-common/1.64.1:
     dependencies:
       '@aws-cdk/aws-iam': 1.64.1
@@ -884,16 +899,6 @@ packages:
       node: '>= 10.13.0 <13 || >=13.7.0'
     resolution:
       integrity: sha512-+KGCAqclB7ATc0DXyG3UCz/eC4rstX8VhWBP6OroDEFzu84pBelmN9fE2UWm+hX5/LpzkJMW5QNQ2W0mnEiEXQ==
-  /@aws-cdk/aws-lambda-nodejs/1.64.1:
-    dependencies:
-      '@aws-cdk/aws-lambda': 1.64.1
-      '@aws-cdk/core': 1.64.1
-      constructs: 3.0.4
-    dev: false
-    engines:
-      node: '>= 10.13.0 <13 || >=13.7.0'
-    resolution:
-      integrity: sha512-afETALQrJpwz8vLBHmRbOwg/fIAwPoj9Y5qMNIhwXpuguB7qmf1xoz9nzpFCnwpBW700cFF6t4wFFTNWc5zz+g==
   /@aws-cdk/aws-lambda/1.64.1:
     dependencies:
       '@aws-cdk/aws-applicationautoscaling': 1.64.1
@@ -1249,6 +1254,7 @@ packages:
     resolution:
       integrity: sha512-nCZYDRWHBnGfoKylXEaA3shNyDyIdSe21I1oImiF5aBCpkjgrhMyW8p57FdfCAWa1FqhBwiPGa91Gl85LX+jiA==
   /@aws-cdk/pipelines/1.64.1:
+    bundledDependencies: []
     dependencies:
       '@aws-cdk/aws-cloudformation': 1.64.1
       '@aws-cdk/aws-codebuild': 1.64.1

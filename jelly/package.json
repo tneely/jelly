@@ -48,6 +48,7 @@
     "@aws-cdk/aws-route53-targets": "^1.64.1",
     "@aws-cdk/aws-s3": "^1.64.1",
     "@aws-cdk/aws-s3-deployment": "^1.64.1",
+    "@aws-cdk/aws-appsync": "^1.64.1",
     "@aws-cdk/core": "^1.64.1"
   },
   "devDependencies": {
@@ -72,6 +73,7 @@
     "@aws-cdk/aws-route53-targets": "^1.64.1",
     "@aws-cdk/aws-s3": "^1.64.1",
     "@aws-cdk/aws-s3-deployment": "^1.64.1",
+    "@aws-cdk/aws-appsync": "^1.64.1",
     "@aws-cdk/core": "^1.64.1",
     "@types/jsonwebtoken": "^8.5.0",
     "@types/jwk-to-pem": "^2.0.0",
