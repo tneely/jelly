@@ -57,20 +57,16 @@ export class Authentication extends cdk.Construct {
   }
 
   private createAuthClient(rootDomainName?: string): cognito.UserPoolClient {
+    const allowedDomains = rootDomainName
+      ? [`https://${rootDomainName}`, `https://${rootDomainName}/`]
+      : undefined;
     const client = this.userPool.addClient("UserPoolClient", {
       oAuth: {
         // TODO: support OAuth flows?
-        callbackUrls: rootDomainName
-          ? [`https://${rootDomainName}`, `https://${rootDomainName}/`]
-          : undefined,
+        callbackUrls: allowedDomains,
+        logoutUrls: allowedDomains,
       },
     });
-
-    // FIXME: Introduce proper logout url config in the userpool client
-    (client.node.defaultChild as cognito.CfnUserPoolClient).logoutUrLs = [
-      `https://${rootDomainName}`,
-      `https://${rootDomainName}/`,
-    ];
 
     return client;
   }
