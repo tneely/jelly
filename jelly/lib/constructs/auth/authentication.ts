@@ -1,8 +1,6 @@
 import * as cdk from "@aws-cdk/core";
 import * as cognito from "@aws-cdk/aws-cognito";
 import * as routeAlias from "@aws-cdk/aws-route53-targets";
-import * as lambda from "@aws-cdk/aws-lambda";
-import { AuthFunction } from "./auth-function";
 import { Routing } from "../routing";
 
 export interface AuthenticationProps {
@@ -22,7 +20,6 @@ export interface AuthenticationProps {
 export class Authentication extends cdk.Construct {
   public readonly userPool: cognito.UserPool;
   public readonly userPoolClient: cognito.UserPoolClient;
-  public readonly authHandler: lambda.Function;
 
   constructor(scope: cdk.Construct, props: AuthenticationProps) {
     super(scope, "Authentication");
@@ -46,10 +43,6 @@ export class Authentication extends cdk.Construct {
     });
 
     this.userPoolClient = this.createAuthClient(props.routing?.rootDomain.name);
-    this.authHandler = new AuthFunction(this, "AuthHandler", {
-      userPoolProviderUrl: this.userPool.userPoolProviderUrl,
-      userPoolClientId: this.userPoolClient.userPoolClientId,
-    });
 
     if (props.routing) {
       this.createAuthDomain(props.routing);

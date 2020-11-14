@@ -1,28 +1,14 @@
 import * as cdk from "@aws-cdk/core";
 
-import { Api, Authentication, Database, Cdn, Routing } from "./constructs";
-import { ApiOptions } from "./constructs/api/api";
+import { Api, Authentication, Cdn, Routing } from "./constructs";
 import { ClientOptions } from "./constructs/client";
 import { RoutingOptions } from "./constructs/routing";
-import { DatabaseOptions } from "./constructs/database";
 
 export interface JellyProps extends cdk.StackProps {
   /**
    * Properties related to the web client
    */
   client: ClientOptions;
-
-  /**
-   * Properties related to the API
-   */
-  api: ApiOptions;
-
-  /**
-   * Properties related to the database
-   *
-   * @default - No tables will be created
-   */
-  database?: DatabaseOptions;
 
   /**
    * Domain routing
@@ -41,7 +27,6 @@ export interface JellyProps extends cdk.StackProps {
 
 export class Jelly extends cdk.Stack {
   public readonly api: Api;
-  public readonly database: Database;
   public readonly cdn: Cdn;
   public readonly auth?: Authentication;
   public readonly routing?: Routing;
@@ -54,8 +39,6 @@ export class Jelly extends cdk.Stack {
         ...props.routing,
       });
     }
-
-    this.database = new Database(this, props.database);
 
     this.cdn = new Cdn(this, {
       ...props.client,
@@ -73,10 +56,8 @@ export class Jelly extends cdk.Stack {
     }
 
     this.api = new Api(this, {
-      ...props.api,
-      database: this.database,
       routing: this.routing,
-      authHandler: this.auth?.authHandler,
+      userPool: this.auth?.userPool,
     });
   }
 }
