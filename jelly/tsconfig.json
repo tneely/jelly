@@ -7,7 +7,7 @@
     "lib": ["es2018"],
     "rootDirs": ["lib"],
     "outDir": "dist",
-    "types": ["node", "jest"],
+    "types": ["node", "heft-jest"],
     "strict": true,
     "alwaysStrict": true,
     "declaration": true,

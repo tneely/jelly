@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Auth, API } from "aws-amplify";
 
-export const MessageBoard = (props: { loggedIn: boolean }) => {
+export const MessageBoard = (props: { loggedIn: boolean }): JSX.Element => {
   const [message, setMessage] = useState<string>("");
   const [messages, setMessages] = useState<any[]>([]);
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     getMessages();
   }, []);
 
-  const getMessages = async () => {
+  const getMessages = async (): Promise<void> => {
     const messages = await API.get("MessageApi", "/messages", {
       headers: {
         "Access-Control-Allow-Origin": "*",
@@ -18,7 +19,7 @@ export const MessageBoard = (props: { loggedIn: boolean }) => {
     setMessages(messages);
   };
 
-  const putMessage = async () => {
+  const putMessage = async (): Promise<void> => {
     await API.post("MessageApi", "/messages", {
       body: {
         message,
@@ -36,9 +37,9 @@ export const MessageBoard = (props: { loggedIn: boolean }) => {
     <>
       <form
         style={{ textAlign: "right" }}
-        onSubmit={(e) => {
+        onSubmit={async (e) => {
           e.preventDefault();
-          putMessage();
+          await putMessage();
         }}
       >
         <textarea
