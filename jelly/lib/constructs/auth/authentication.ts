@@ -1,6 +1,6 @@
-import * as cdk from "@aws-cdk/core";
-import * as cognito from "@aws-cdk/aws-cognito";
-import * as routeAlias from "@aws-cdk/aws-route53-targets";
+import { Construct, CfnOutput } from "aws-cdk-lib";
+import { UserPool, UserPoolClient } from "aws-cdk-lib/aws-cognito";
+import { UserPoolDomainTarget } from "aws-cdk-lib/lib/aws-route53-targets";
 import { Routing } from "../routing";
 
 export interface AuthenticationProps {
@@ -17,14 +17,14 @@ export interface AuthenticationProps {
 /**
  * A Construct to create the application's user authentication
  */
-export class Authentication extends cdk.Construct {
-  public readonly userPool: cognito.UserPool;
-  public readonly userPoolClient: cognito.UserPoolClient;
+export class Authentication extends Construct {
+  public readonly userPool: UserPool;
+  public readonly userPoolClient: UserPoolClient;
 
-  constructor(scope: cdk.Construct, props: AuthenticationProps) {
+  constructor(scope: Construct, props: AuthenticationProps) {
     super(scope, "Authentication");
 
-    this.userPool = new cognito.UserPool(this, "UserPool", {
+    this.userPool = new UserPool(this, "UserPool", {
       selfSignUpEnabled: true,
       standardAttributes: {
         email: {
@@ -49,7 +49,7 @@ export class Authentication extends cdk.Construct {
     }
   }
 
-  private createAuthClient(rootDomainName?: string): cognito.UserPoolClient {
+  private createAuthClient(rootDomainName?: string): UserPoolClient {
     const allowedDomains = rootDomainName
       ? [`https://${rootDomainName}`, `https://${rootDomainName}/`]
       : undefined;
@@ -71,8 +71,8 @@ export class Authentication extends cdk.Construct {
         certificate: routing.rootDomain.certificate,
       },
     });
-    routing.authDomain.addAliasTarget(new routeAlias.UserPoolDomainTarget(domain));
-    new cdk.CfnOutput(this, "AuthUrl", {
+    routing.authDomain.addAliasTarget(new UserPoolDomainTarget(domain));
+    new CfnOutput(this, "AuthUrl", {
       value: domain.signInUrl(this.userPoolClient, {
         redirectUri: `https://${routing.rootDomain.name}/`,
       }),

@@ -1,5 +1,11 @@
-import * as cdk from "@aws-cdk/core";
-import * as route53 from "@aws-cdk/aws-route53";
+import { Construct } from "aws-cdk-lib";
+import {
+  HostedZone,
+  PublicHostedZone,
+  IAliasRecordTarget,
+  ARecord,
+  RecordTarget,
+} from "aws-cdk-lib/lib/aws-route53";
 
 export interface DomainProps {
   /**
@@ -11,24 +17,24 @@ export interface DomainProps {
 /**
  * A Construct to create and host the application's custom domain
  */
-export class Domain extends cdk.Construct {
-  public readonly hostedZone: route53.HostedZone;
+export class Domain extends Construct {
+  public readonly hostedZone: HostedZone;
   public readonly name: string;
 
-  constructor(scope: cdk.Construct, id: string, props: DomainProps) {
+  constructor(scope: Construct, id: string, props: DomainProps) {
     super(scope, id);
 
     this.name = props.domainName;
-    this.hostedZone = new route53.PublicHostedZone(this, "HostedZone", {
+    this.hostedZone = new PublicHostedZone(this, "HostedZone", {
       zoneName: props.domainName,
     });
   }
 
-  addAliasTarget(aliasTarget: route53.IAliasRecordTarget): route53.ARecord {
-    return new route53.ARecord(this, "AliasRecord", {
+  addAliasTarget(aliasTarget: IAliasRecordTarget): ARecord {
+    return new ARecord(this, "AliasRecord", {
       zone: this.hostedZone,
       recordName: this.name,
-      target: route53.RecordTarget.fromAlias(aliasTarget),
+      target: RecordTarget.fromAlias(aliasTarget),
     });
   }
 }

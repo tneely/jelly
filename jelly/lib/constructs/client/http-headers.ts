@@ -1,6 +1,6 @@
-import * as cdk from "@aws-cdk/core";
-import * as lambda from "@aws-cdk/aws-lambda";
-import * as cloudfront from "@aws-cdk/aws-cloudfront";
+import { Construct } from "aws-cdk-lib";
+import { LambdaEdgeEventType } from "aws-cdk-lib/lib/aws-cloudfront";
+import { Code, Runtime } from "aws-cdk-lib/lib/aws-lambda";
 import { EdgeFunction } from "./edge-function";
 
 export interface HttpHeaderOptions {
@@ -64,12 +64,12 @@ export interface HttpHeaderOptions {
 export interface HttpHeadersProps extends HttpHeaderOptions {}
 
 export class HttpHeaders extends EdgeFunction {
-  constructor(scope: cdk.Construct, id: string, props: HttpHeadersProps) {
+  constructor(scope: Construct, id: string, props: HttpHeadersProps) {
     super(scope, id, {
       handler: "index.handler",
-      code: lambda.Code.fromInline(renderCode(props)),
-      runtime: lambda.Runtime.NODEJS_12_X,
-      eventType: cloudfront.LambdaEdgeEventType.ORIGIN_RESPONSE,
+      code: Code.fromInline(renderCode(props)),
+      runtime: Runtime.NODEJS_12_X,
+      eventType: LambdaEdgeEventType.ORIGIN_RESPONSE,
     });
   }
 }
@@ -81,8 +81,7 @@ const renderCode = (headerOptions: HttpHeaderOptions): string => {
   const xXssProtection = headerOptions.xXssProtection ?? "1; mode=block";
   const xFrameOptions = headerOptions.xFrameOptions ?? "DENY";
   const referrerPolicy = headerOptions.referrerPolicy ?? "strict-origin-when-cross-origin";
-  const featurePolicy =
-    headerOptions.featurePolicy ?? "microphone 'self'; geolocation 'self'; camera 'self'";
+  const featurePolicy = headerOptions.featurePolicy ?? "microphone 'self'; geolocation 'self'; camera 'self'";
   const contentSecurityPolicy = headerOptions.contentSecurityPolicy ?? "default-src 'self'";
   const accessControlAllowOrigin = headerOptions.accessControlAllowOrigin ?? "*";
 

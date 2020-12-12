@@ -1,7 +1,7 @@
+import { ObjectType } from "aws-cdk-lib/lib/aws-appsync";
 import * as scalar from "./scalar-types";
-import * as appsync from "@aws-cdk/aws-appsync";
 
-export const Comment = new appsync.ObjectType("Comment", {
+export const Comment = new ObjectType("Comment", {
   definition: {
     text: scalar.string,
   },

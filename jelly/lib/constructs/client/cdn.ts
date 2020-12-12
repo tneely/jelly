@@ -1,18 +1,23 @@
-import * as cdk from "@aws-cdk/core";
-import * as s3 from "@aws-cdk/aws-s3";
-import * as s3deploy from "@aws-cdk/aws-s3-deployment";
-import * as cloudfront from "@aws-cdk/aws-cloudfront";
-import * as cloudfront_origins from "@aws-cdk/aws-cloudfront-origins";
-import * as routeAlias from "@aws-cdk/aws-route53-targets";
+import { Construct } from "aws-cdk-lib";
+import {
+  Distribution,
+  ViewerProtocolPolicy,
+  PriceClass,
+  EdgeLambda,
+  ErrorResponse,
+} from "aws-cdk-lib/lib/aws-cloudfront";
+import { S3Origin } from "aws-cdk-lib/lib/aws-cloudfront-origins";
+import { CloudFrontTarget } from "aws-cdk-lib/lib/aws-route53-targets";
+import { IBucket, Bucket } from "aws-cdk-lib/lib/aws-s3";
+import { BucketDeployment, ISource } from "aws-cdk-lib/lib/aws-s3-deployment";
 import { Routing } from "../routing";
-import { ErrorResponse } from "@aws-cdk/aws-cloudfront";
 import { HttpHeaderOptions, HttpHeaders } from "./http-headers";
 
 export interface ClientOptions {
   /**
    * The source code to distribute
    */
-  source: s3deploy.ISource;
+  source: ISource;
   /**
    * Additional HTTP headers to use for the website
    *
@@ -48,33 +53,33 @@ export interface CdnProps extends ClientOptions {
 /**
  * A Construct to create and deploy the application's CDN
  */
-export class Cdn extends cdk.Construct {
-  public readonly distributionBucket: s3.IBucket;
-  public readonly distribution: cloudfront.Distribution;
+export class Cdn extends Construct {
+  public readonly distributionBucket: IBucket;
+  public readonly distribution: Distribution;
 
-  constructor(scope: cdk.Construct, props: CdnProps) {
+  constructor(scope: Construct, props: CdnProps) {
     super(scope, "Cdn");
 
-    this.distributionBucket = new s3.Bucket(this, "DistributionBucket", {
+    this.distributionBucket = new Bucket(this, "DistributionBucket", {
       websiteIndexDocument: "index.html",
       publicReadAccess: true,
     });
 
-    this.distribution = new cloudfront.Distribution(this, "Distribution", {
+    this.distribution = new Distribution(this, "Distribution", {
       defaultBehavior: {
-        origin: new cloudfront_origins.S3Origin(this.distributionBucket),
-        viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+        origin: new S3Origin(this.distributionBucket),
+        viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
         edgeLambdas: this.renderEdgeLambdas(props.httpHeaders),
       },
-      priceClass: cloudfront.PriceClass.PRICE_CLASS_100,
+      priceClass: PriceClass.PRICE_CLASS_100,
       certificate: props.routing?.rootDomain.certificate,
       domainNames: this.renderDomainNames(props.routing),
       errorResponses: this.renderResponseBehavior(props.isSPA),
     });
 
-    props.routing?.rootDomain.addAliasTarget(new routeAlias.CloudFrontTarget(this.distribution));
+    props.routing?.rootDomain.addAliasTarget(new CloudFrontTarget(this.distribution));
 
-    new s3deploy.BucketDeployment(this, "DeployWithInvalidation", {
+    new BucketDeployment(this, "DeployWithInvalidation", {
       sources: [props.source],
       destinationBucket: this.distributionBucket,
       distribution: this.distribution,
@@ -86,7 +91,7 @@ export class Cdn extends cdk.Construct {
     return rootDomainName ? [rootDomainName] : [];
   }
 
-  private renderEdgeLambdas(httpHeaders?: HttpHeaderOptions): cloudfront.EdgeLambda[] {
+  private renderEdgeLambdas(httpHeaders?: HttpHeaderOptions): EdgeLambda[] {
     return [new HttpHeaders(this, "HttpHeaders", { ...httpHeaders })];
   }
 

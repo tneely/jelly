@@ -1,27 +1,26 @@
-import * as cdk from "@aws-cdk/core";
-import * as codepipeline from "@aws-cdk/aws-codepipeline";
-import * as codepipeline_actions from "@aws-cdk/aws-codepipeline-actions";
-import * as pipelines from "@aws-cdk/pipelines";
-import * as codebuild from "@aws-cdk/aws-codebuild";
+import { Stack, Construct, StackProps, pipelines, SecretValue, App } from "aws-cdk-lib";
+import { LinuxBuildImage } from "aws-cdk-lib/lib/aws-codebuild";
+import { Artifact } from "aws-cdk-lib/lib/aws-codepipeline";
+import { GitHubSourceAction } from "aws-cdk-lib/lib/aws-codepipeline-actions";
 import { ExampleJellyApp } from "../lib/example-jelly-app";
 
 const gitHubOAuthToken = "github/token/example-jelly-app";
 
-class PipelineStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+class PipelineStack extends Stack {
+  constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    const sourceArtifact = new codepipeline.Artifact();
-    const cloudAssemblyArtifact = new codepipeline.Artifact("CloudAssemblyArtifact");
+    const sourceArtifact = new Artifact();
+    const cloudAssemblyArtifact = new Artifact("CloudAssemblyArtifact");
 
     const pipeline = new pipelines.CdkPipeline(this, "Pipeline", {
       pipelineName: "ExampleJellyAppPipeline",
       cloudAssemblyArtifact,
 
-      sourceAction: new codepipeline_actions.GitHubSourceAction({
+      sourceAction: new GitHubSourceAction({
         actionName: "GitHub",
         output: sourceArtifact,
-        oauthToken: cdk.SecretValue.secretsManager(gitHubOAuthToken),
+        oauthToken: SecretValue.secretsManager(gitHubOAuthToken),
         owner: "tneely",
         repo: "jelly",
       }),
@@ -33,7 +32,7 @@ class PipelineStack extends cdk.Stack {
         buildCommands: ["rush build"],
         synthCommand: "mv example/infrastructure/cdk.out ./cdk.out",
         environment: {
-          buildImage: codebuild.LinuxBuildImage.STANDARD_4_0,
+          buildImage: LinuxBuildImage.STANDARD_4_0,
           privileged: true,
         },
       }),
@@ -43,5 +42,5 @@ class PipelineStack extends cdk.Stack {
   }
 }
 
-const app = new cdk.App();
+const app = new App();
 new PipelineStack(app, "PipelineStack");

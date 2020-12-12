@@ -1,10 +1,9 @@
-import * as cdk from "@aws-cdk/core";
-
+import { Construct, Stack, StackProps } from "aws-cdk-lib";
 import { Api, Authentication, Cdn, Routing } from "./constructs";
 import { ClientOptions } from "./constructs/client";
 import { RoutingOptions } from "./constructs/routing";
 
-export interface JellyProps extends cdk.StackProps {
+export interface JellyProps extends StackProps {
   /**
    * Properties related to the web client
    */
@@ -25,13 +24,13 @@ export interface JellyProps extends cdk.StackProps {
   withUserAuthentication?: boolean;
 }
 
-export class Jelly extends cdk.Stack {
+export class Jelly extends Stack {
   public readonly api: Api;
   public readonly cdn: Cdn;
   public readonly auth?: Authentication;
   public readonly routing?: Routing;
 
-  constructor(scope: cdk.Construct, props: JellyProps) {
+  constructor(scope: Construct, props: JellyProps) {
     super(scope, "Jelly", props);
 
     if (props.routing) {

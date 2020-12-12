@@ -1,7 +1,7 @@
-import * as cdk from "@aws-cdk/core";
-import * as acm from "@aws-cdk/aws-certificatemanager";
-import * as route53 from "@aws-cdk/aws-route53";
-import * as route53patterns from "@aws-cdk/aws-route53-patterns";
+import { Construct } from "aws-cdk-lib";
+import { ICertificate, CertificateValidation, Certificate } from "aws-cdk-lib/lib/aws-certificatemanager";
+import { ZoneDelegationRecord } from "aws-cdk-lib/lib/aws-route53";
+import { HttpsRedirect } from "aws-cdk-lib/lib/aws-route53-patterns";
 import { Domain } from "./domain";
 
 export interface RootDomainProps {
@@ -13,20 +13,20 @@ export interface RootDomainProps {
  */
 export class RootDomain extends Domain {
   public readonly name: string;
-  public readonly certificate: acm.ICertificate;
+  public readonly certificate: ICertificate;
 
-  constructor(scope: cdk.Construct, props: RootDomainProps) {
+  constructor(scope: Construct, props: RootDomainProps) {
     super(scope, "RootDomain", { domainName: props.baseDomainName });
 
     this.name = `www.${props.baseDomainName}`;
 
-    this.certificate = new acm.Certificate(this, "Certificate", {
+    this.certificate = new Certificate(this, "Certificate", {
       domainName: props.baseDomainName,
       subjectAlternativeNames: [`*.${props.baseDomainName}`],
-      validation: acm.CertificateValidation.fromDns(this.hostedZone),
+      validation: CertificateValidation.fromDns(this.hostedZone),
     });
 
-    new route53patterns.HttpsRedirect(this, "WwwRedirect", {
+    new HttpsRedirect(this, "WwwRedirect", {
       targetDomain: this.name,
       zone: this.hostedZone,
       certificate: this.certificate,
@@ -34,15 +34,11 @@ export class RootDomain extends Domain {
     });
   }
 
-  delegateSubDomain(subdomain: Domain): route53.ZoneDelegationRecord {
-    return new route53.ZoneDelegationRecord(
-      this,
-      `ZoneDelegationRecord-${subdomain.hostedZone.zoneName}`,
-      {
-        zone: this.hostedZone,
-        recordName: subdomain.hostedZone.zoneName,
-        nameServers: subdomain.hostedZone.hostedZoneNameServers!,
-      }
-    );
+  delegateSubDomain(subdomain: Domain): ZoneDelegationRecord {
+    return new ZoneDelegationRecord(this, `ZoneDelegationRecord-${subdomain.hostedZone.zoneName}`, {
+      zone: this.hostedZone,
+      recordName: subdomain.hostedZone.zoneName,
+      nameServers: subdomain.hostedZone.hostedZoneNameServers!,
+    });
   }
 }

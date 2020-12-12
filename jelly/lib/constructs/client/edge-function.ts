@@ -1,32 +1,30 @@
-import * as cdk from "@aws-cdk/core";
-import * as lambda from "@aws-cdk/aws-lambda";
-import * as iam from "@aws-cdk/aws-iam";
-import * as cloudfront from "@aws-cdk/aws-cloudfront";
+import { Construct } from "aws-cdk-lib";
+import { EdgeLambda, LambdaEdgeEventType } from "aws-cdk-lib/lib/aws-cloudfront";
+import { Role, CompositePrincipal, ServicePrincipal, ManagedPolicy } from "aws-cdk-lib/lib/aws-iam";
+import { FunctionProps, IVersion, Function } from "aws-cdk-lib/lib/aws-lambda";
 
-export interface EdgeFunctionProps extends Omit<lambda.FunctionProps, "environment" | "role"> {
+export interface EdgeFunctionProps extends Omit<FunctionProps, "environment" | "role"> {
   /**
    * The type of event in response to which should the function be invoked
    */
-  eventType: cloudfront.LambdaEdgeEventType;
+  eventType: LambdaEdgeEventType;
 }
 
-export class EdgeFunction extends cdk.Construct implements cloudfront.EdgeLambda {
-  public readonly functionVersion: lambda.IVersion;
-  public readonly eventType: cloudfront.LambdaEdgeEventType;
+export class EdgeFunction extends Construct implements EdgeLambda {
+  public readonly functionVersion: IVersion;
+  public readonly eventType: LambdaEdgeEventType;
 
-  constructor(scope: cdk.Construct, id: string, props: EdgeFunctionProps) {
+  constructor(scope: Construct, id: string, props: EdgeFunctionProps) {
     super(scope, id);
 
-    const handler = new lambda.Function(this, "Resource", {
+    const handler = new Function(this, "Resource", {
       ...props,
-      role: new iam.Role(scope, "EdgeRole", {
-        assumedBy: new iam.CompositePrincipal(
-          new iam.ServicePrincipal("lambda.amazonaws.com"),
-          new iam.ServicePrincipal("edgelambda.amazonaws.com")
+      role: new Role(scope, "EdgeRole", {
+        assumedBy: new CompositePrincipal(
+          new ServicePrincipal("lambda.amazonaws.com"),
+          new ServicePrincipal("edgelambda.amazonaws.com")
         ),
-        managedPolicies: [
-          iam.ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole"),
-        ],
+        managedPolicies: [ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole")],
       }),
     });
 

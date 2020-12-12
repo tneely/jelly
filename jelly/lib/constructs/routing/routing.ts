@@ -1,4 +1,4 @@
-import * as cdk from "@aws-cdk/core";
+import { Construct } from "aws-cdk-lib";
 import { Domain } from "./domain";
 import { RootDomain } from "./root-domain";
 
@@ -28,12 +28,12 @@ export interface RoutingProps extends RoutingOptions {}
 /**
  * A Construct to create and manage the application's custom domains
  */
-export class Routing extends cdk.Construct {
+export class Routing extends Construct {
   public readonly rootDomain: RootDomain;
   public readonly apiDomain: Domain;
   public readonly authDomain: Domain;
 
-  constructor(scope: cdk.Construct, props: RoutingProps) {
+  constructor(scope: Construct, props: RoutingProps) {
     super(scope, "Routing");
 
     const apiSubDomainPrefix = props.apiSubdomain ?? "api";
