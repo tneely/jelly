@@ -24,7 +24,7 @@ export class ApiStack extends Stack {
       },
       sortKey: {
         name: "created",
-        type: AttributeType.NUMBER,
+        type: AttributeType.STRING,
       },
       timeToLiveAttribute: "ttl",
     });
