@@ -40,6 +40,11 @@ export class ApiStack extends Stack {
         responseMappingTemplate: MappingTemplate.dynamoDbResultList(),
       })
     );
+
+    const commentValues = Values.projecting();
+    commentValues.attribute("created").is("$util.time.nowISO8601()");
+    commentValues.attribute("ttl").is("$util.time.nowEpochSeconds() + 3600 * 24 * 7");
+
     props.api.addMutation(
       "createComment",
       new ResolvableField({
@@ -47,7 +52,7 @@ export class ApiStack extends Stack {
         dataSource: commentsDataSource,
         requestMappingTemplate: MappingTemplate.dynamoDbPutItem(
           PrimaryKey.partition("id").auto(),
-          Values.projecting("text")
+          commentValues
         ),
         responseMappingTemplate: MappingTemplate.dynamoDbResultItem(),
       })

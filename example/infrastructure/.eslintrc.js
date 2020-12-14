@@ -9,6 +9,7 @@ module.exports = {
     "@typescript-eslint/naming-convention": "off",
     "@typescript-eslint/typedef": "off",
     "@typescript-eslint/explicit-member-accessibility": "off",
+    "@rushstack/typedef-var": "off",
     "no-new": "off",
   },
 };
