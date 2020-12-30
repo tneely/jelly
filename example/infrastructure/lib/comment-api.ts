@@ -1,23 +1,13 @@
-import { Construct, Stack, StackProps } from "aws-cdk-lib";
-import {
-  GraphqlApi,
-  ResolvableField,
-  MappingTemplate,
-  PrimaryKey,
-  Values,
-} from "aws-cdk-lib/lib/aws-appsync";
+import { StackProps } from "aws-cdk-lib";
+import { ResolvableField, MappingTemplate, PrimaryKey, Values } from "aws-cdk-lib/lib/aws-appsync";
 import { Table, AttributeType } from "aws-cdk-lib/lib/aws-dynamodb";
+import { Api } from "cdk-jelly/dist/constructs";
 import { Comment } from "./object-types";
+import { string } from "./scalar-types";
 
-export interface ApiStackProps extends StackProps {
-  api: GraphqlApi;
-}
-
-export class ApiStack extends Stack {
-  constructor(scope: Construct, props: ApiStackProps) {
-    super(scope, "ApiStack", props);
-
-    const commentsTable = new Table(this, "CommentsTable", {
+export class CommentApi {
+  constructor(api: Api) {
+    const commentsTable = api.addTable("Comments", {
       partitionKey: {
         name: "id",
         type: AttributeType.STRING,
@@ -26,12 +16,11 @@ export class ApiStack extends Stack {
         name: "created",
         type: AttributeType.STRING,
       },
-      timeToLiveAttribute: "ttl",
     });
 
-    props.api.addType(Comment);
-    const commentsDataSource = props.api.addDynamoDbDataSource("commentsDataSource", commentsTable);
-    props.api.addQuery(
+    api.addType(Comment);
+    const commentsDataSource = api.addDynamoDbDataSource("commentsDataSource", commentsTable);
+    api.addQuery(
       "listComments",
       new ResolvableField({
         returnType: Comment.attribute({ isList: true }),
@@ -43,12 +32,15 @@ export class ApiStack extends Stack {
 
     const commentValues = Values.projecting();
     commentValues.attribute("created").is("$util.time.nowISO8601()");
-    commentValues.attribute("ttl").is("$util.time.nowEpochSeconds() + 3600 * 24 * 7");
+    // TODO: Add TTL once math is supported using #set
+    // #set ($ttl = $util.time.nowEpochSeconds() + 3600 * 24 * 7)
+    // commentValues.attribute("ttl").is("$ttl");
 
-    props.api.addMutation(
+    api.addMutation(
       "createComment",
       new ResolvableField({
         returnType: Comment.attribute(),
+        args: { text: string },
         dataSource: commentsDataSource,
         requestMappingTemplate: MappingTemplate.dynamoDbPutItem(
           PrimaryKey.partition("id").auto(),

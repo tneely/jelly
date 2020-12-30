@@ -1,6 +1,7 @@
 import { Construct } from "aws-cdk-lib";
 import { UserPool } from "aws-cdk-lib/aws-cognito";
 import { AuthorizationMode, AuthorizationType, GraphqlApi } from "aws-cdk-lib/lib/aws-appsync";
+import { Table, TableProps } from "aws-cdk-lib/aws-dynamodb";
 import { Optional } from "../../util/types";
 import { Routing } from "../routing";
 
@@ -36,6 +37,10 @@ export class Api extends GraphqlApi {
     });
 
     // TODO: Support custom domain?
+  }
+
+  public addTable(name: string, props: TableProps): Table {
+    return new Table(this, name, props);
   }
 }
 

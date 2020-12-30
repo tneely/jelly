@@ -2,7 +2,7 @@ import { StageProps, Stage, Construct } from "aws-cdk-lib";
 import { Source } from "aws-cdk-lib/lib/aws-s3-deployment";
 import { Jelly } from "cdk-jelly";
 import { dirname } from "path";
-import { ApiStack } from "./api-stack";
+import { CommentApi } from "./comment-api";
 
 export interface ExampleJellyAppProps extends StageProps {}
 
@@ -23,8 +23,6 @@ export class ExampleJellyApp extends Stage {
       },
     });
 
-    new ApiStack(this, {
-      api: jelly.api,
-    });
+    new CommentApi(jelly.api);
   }
 }
