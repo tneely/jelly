@@ -68,14 +68,6 @@ const apiDataSource = api.addDynamoDbDataSource("apiDataSource", apiTable);
 
 Jelly uses AppSync for its GraphQL API. Use the `Api` construct exposed by Jelly to build out your AppSync schema and resolvers.
 
-```typescript
-baseEnvironmentVariables = {
-  `${DATABASE_NAMES}`: table.tableName, // keys in JellyProps.Database.tables mapped to their corresponding table names
-  AUTH_LAMBDA_ARN: lambda.functionArn, // name of a lambda used to authenticate users
-  AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1", // enables connection reuse in Node.js functions
-}
-```
-
 ### Authentication
 
 ```typescript
