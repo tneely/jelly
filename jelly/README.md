@@ -61,20 +61,12 @@ If you are not creating a single page app, set `isSPA` to `false` in order to no
 ### API
 
 ```typescript
-new Jelly(this, {
-  api: {
-    code: lambda.Code.fromAsset(dirname(require.resolve("example-api"))),
-    handlerName: "index.handler", // optional, this is default
-    handlerRuntime: lambda.Runtime.NODEJS_12_X, // optional, this is default
-    environmentVariables: { // optional, no additional variables is default
-      MY_VARIABLE: "myValue",
-    },
-  },
-  // ...
-});
+const jelly = new Jelly(this, {...});
+const apiTable = jelly.api.newTable("MyApiTable", {...});
+const apiDataSource = api.addDynamoDbDataSource("apiDataSource", apiTable);
 ```
 
-Jelly deploys your API as a single lambda function. It sets several environment variables out of the box to grant your API access to the resources it needs.
+Jelly uses AppSync for its GraphQL API. Use the `Api` construct exposed by Jelly to build out your AppSync schema and resolvers.
 
 ```typescript
 baseEnvironmentVariables = {

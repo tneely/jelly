@@ -29,11 +29,13 @@ Check out the [API][1], [client][2], and [infrastructure][3].
 
 - Testing
 - Update documentation
+- Address TODOs
 
 ### Enhancements
 
 - Dashboards, alarms, pipeline tests, etc.
-- Migrate to monocdk (v2)
+- API flexibility
+- Publish as pipeline step
 
 ## Troubleshooting
 
