@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Amplify, { Auth, Hub, API } from "aws-amplify";
+import Amplify, { Auth, Hub } from "aws-amplify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
 import awsconfig from "./aws-config";
@@ -10,8 +10,8 @@ import { MessageBoard } from "./components/message-board";
 Amplify.configure(awsconfig);
 const githubIcon = <FontAwesomeIcon icon={faGithub} />;
 
-const App = () => {
-  const [user, setUser] = useState<any>(null);
+const App = (): JSX.Element => {
+  const [user, setUser] = useState<{} | null>(null);
 
   useEffect(() => {
     Auth.currentAuthenticatedUser()
@@ -59,8 +59,7 @@ const App = () => {
           <h2 className="section-header">Try it out!</h2>
           <p>
             This website was built using Jelly. You can log in and log out using the button below. Once logged
-            in, you'll be able to leave an anonymous message as well. Only the 10 most recent messages are
-            displayed. Messages persist for 7 days.
+            in, you'll be able to view and leave anonymous messages.
           </p>
 
           <div style={{ textAlign: "center" }}>

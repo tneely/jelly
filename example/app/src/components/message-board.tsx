@@ -1,34 +1,27 @@
 import React, { useState, useEffect } from "react";
-import { Auth, API } from "aws-amplify";
+import { API, graphqlOperation } from "aws-amplify";
+import { createComment } from "../graphql/mutations";
+import { listComments } from "../graphql/queries";
 
 export const MessageBoard = (props: { loggedIn: boolean }): JSX.Element => {
   const [message, setMessage] = useState<string>("");
-  const [messages, setMessages] = useState<any[]>([]);
+  const [messages, setMessages] = useState<{ text: string }[]>([]);
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    getMessages();
+    getMessages().catch((e) => console.log(`Problem getting messages: ${e}`));
   }, []);
 
   const getMessages = async (): Promise<void> => {
-    const messages = await API.get("MessageApi", "/messages", {
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-      },
-    });
-    setMessages(messages);
+    const messages = (await API.graphql({ query: listComments })) as {
+      data: { listComments: { text: string }[] };
+    };
+    setMessages(messages.data.listComments);
   };
 
   const putMessage = async (): Promise<void> => {
-    await API.post("MessageApi", "/messages", {
-      body: {
-        message,
-      },
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        Authorization: (await Auth.currentSession()).getIdToken().getJwtToken(),
-      },
-    });
+    console.log(`Writing message ${message}`);
+    await API.graphql(graphqlOperation(createComment, { text: message }));
     setMessage("");
     await getMessages();
   };
@@ -52,10 +45,10 @@ export const MessageBoard = (props: { loggedIn: boolean }): JSX.Element => {
         <input type="submit" value="Submit" disabled={!props.loggedIn || message.trim().length < 1} />
       </form>
       <div>
-        {messages?.map((item: { message: string }, index: number) => {
+        {messages?.map((item, index: number) => {
           return (
             <p key={index} className="message">
-              {item.message}
+              {item.text}
             </p>
           );
         })}
