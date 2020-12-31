@@ -1,6 +1,13 @@
 # Change Log - cdk-jelly
 
-This log was last generated on Tue, 15 Sep 2020 04:06:50 GMT and should not be manually modified.
+This log was last generated on Thu, 31 Dec 2020 22:04:58 GMT and should not be manually modified.
+
+## 2.0.0
+Thu, 31 Dec 2020 22:04:58 GMT
+
+### Breaking changes
+
+- Swap to MonoCDK and use AppSync for API
 
 ## 1.3.0
 Tue, 15 Sep 2020 04:06:50 GMT

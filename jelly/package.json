@@ -1,6 +1,6 @@
 {
   "name": "cdk-jelly",
-  "version": "1.3.0",
+  "version": "2.0.0",
   "description": "A complete serverless web application CDK infrastructure",
   "main": "dist/jelly.js",
   "types": "dist/jelly.d.ts",
